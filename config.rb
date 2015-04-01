@@ -17,3 +17,5 @@ relative_assets = true
 # To disable debugging comments that display the original location of your selectors. Uncomment:
 line_comments = true
 environment = :development
+
+sass_options = {:cache_location => "/d1/sass-cache"}
