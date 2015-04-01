@@ -12,6 +12,41 @@ namespace Avh\EmPermalink;
 class FrontEnd
 {
     /**
+     * Rewrite tags that can be used in permalink structures.
+     *
+     * These are translated into the regular expressions stored in
+     * {@link WP_Rewrite::$rewritereplace} and are rewritten to the
+     * query variables listed in {@link WP_Rewrite::$queryreplace}.
+     *
+     * The key of the array is the actual structure tag
+     *
+     * 'regex'
+     * Regular expressions to be substituted into rewrite rules in place
+     * of rewrite tags, see {@link WP_Rewrite::$rewritecode}.
+     *
+     * 'query'
+     * Query variables that rewrite tags map to, see {@link WP_Rewrite::$rewritecode}.
+     * The query should NOT end with the = sign, we add this later.
+     *
+     * @var array
+     */
+    private $structure_tags_events = [
+        '%event_year%'     => ['regex' => '([0-9]{4})', 'query' => 'event_year'],
+        '%event_monthnum%' => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum'],
+        '%event_day%'      => ['regex' => '([0-9]{1,2})', 'query' => 'event_day'],
+        '%event_hour%'     => ['regex' => '([0-9]{1,2})', 'query' => 'event_year'],
+        '%event_name%'     => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT],
+        '%event_owner%'    => ['regex' => '([^/]+)', 'query' => 'event_owner'],
+        '%event_location%' => ['regex' => '([^/]+)', 'query' => 'location'],
+    ];
+    private $structure_tags_locations = [
+        '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION]
+    ];
+    private $structure_tags_terms = [
+        '%category_name%' => ['regex' => '([^/]+)', 'query' => EM_TAXONOMY_CATEGORY]
+    ];
+
+    /**
      * Constructor.
      *
      * @param Application $app
@@ -37,16 +72,7 @@ class FrontEnd
             case EM_POST_TYPE_EVENT:
 
                 $EM_Event = em_get_event($post->ID, $search_by = 'post_id');
-                $rewritecode_wordpress = [
-                    '%year%',
-                    '%monthnum%',
-                    '%day%',
-                    '%hour%',
-                    '%minute%',
-                    '%second%',
-                    '%category%'
-                ];
-                $rewritecode_events = [
+                $rewritecode = [
                     '%event_year%',
                     '%event_monthnum%',
                     '%event_day%',
@@ -57,7 +83,6 @@ class FrontEnd
                     '%event_location%',
                     '%event_name%'
                 ];
-                $rewritecode = array_merge($rewritecode_wordpress, $rewritecode_events);
 
                 if ('' != $post_link && !in_array($EM_Event->post_status, ['draft', 'pending', 'auto-draft'])) {
                     $unixtime = strtotime($EM_Event->post_date);
@@ -72,17 +97,6 @@ class FrontEnd
                             $category_object = $EM_Categories->categories[0];
                             $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
                             $category = $category_object->slug;
-                            if (isset($category_object->parent)) {
-                                $parent = $category_object->parent;
-                                $category = rps_EM_get_parents(
-                                        $parent,
-                                        false,
-                                        '/',
-                                        true,
-                                        [],
-                                        EM_TAXONOMY_CATEGORY
-                                    ) . $category;
-                            }
                         }
                     }
 
@@ -181,72 +195,12 @@ class FrontEnd
     public function generateRewriteRules()
     {
         /**
-         * Rewrite tags that can be used in permalink structures.
-         *
-         * These are translated into the regular expressions stored in
-         * {@link WP_Rewrite::$rewritereplace} and are rewritten to the
-         * query variables listed in {@link WP_Rewrite::$queryreplace}.
-         *
-         * @var array
-         */
-        $rewritecode = [
-            '%event_year%',
-            '%event_monthnum%',
-            '%event_day%',
-            '%event_hour%',
-            '%event_minute%',
-            '%event_second%',
-            '%event_name%',
-            '%event_owner%',
-            '%event_location%',
-            '%location_name%',
-            '%category_name%'
-        ];
-
-        /**
-         * Regular expressions to be substituted into rewrite rules in place
-         * of rewrite tags, see {@link WP_Rewrite::$rewritecode}.
-         *
-         * @var array
-         */
-        $rewritereplace = [
-            '([0-9]{4})',
-            '([0-9]{1,2})',
-            '([0-9]{1,2})',
-            '([0-9]{1,2})',
-            '([0-9]{1,2})',
-            '([0-9]{1,2})',
-            '([^/]+)',
-            '([^/]+)',
-            '([^/]+)',
-            '([^/]+)',
-            '([^/]+)'
-        ];
-
-        /**
-         * Query variables that rewrite tags map to, see {@link WP_Rewrite::$rewritecode}.
-         *
-         * @var array
-         */
-        $queryreplace = [
-            'event_year=',
-            'event_monthnum=',
-            'event_day=',
-            'event_hour=',
-            'event_minute=',
-            'event_second=',
-            EM_POST_TYPE_EVENT . '=',
-            'event_owner=',
-            'location=',
-            EM_POST_TYPE_LOCATION . '=',
-            EM_TAXONOMY_CATEGORY . '='
-        ];
-        /**
          * Add new rewrite placeholders
          */
-        foreach ($rewritecode as $index => $placeholder) {
-            $regex = $rewritereplace[$index];
-            $query_var = $queryreplace[$index];
+        $structure_tags = $this->structure_tags_events + $this->structure_tags_locations + $this->structure_tags_terms;
+        foreach ($structure_tags as $placeholder => $information) {
+            $regex = $information['regex'];
+            $query_var = $information['query'] . '=';
             add_rewrite_tag($placeholder, $regex, $query_var);
         }
 
@@ -672,7 +626,10 @@ class FrontEnd
      */
     public function setupQueryVars($vars)
     {
-        $vars[] = 'event_year';
+        $structure_tags = $this->structure_tags_events + $this->structure_tags_locations + $this->structure_tags_terms;
+        foreach ($structure_tags as $placeholder => $information) {
+            $vars[] = $information['query'];
+        }
 
         return $vars;
     }
