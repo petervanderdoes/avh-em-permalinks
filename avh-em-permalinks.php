@@ -54,7 +54,7 @@ $avh_em_permalinks_requirements_check = new RequirementsCheck(
 if ($avh_em_permalinks_requirements_check->passes()) {
     $plugin_dir = pathinfo($plugin, PATHINFO_DIRNAME);
     $plugin_basename = plugin_basename($plugin);
-    new Plugin($plugin_dir_dir, $plugin_basename);
+    new Plugin($plugin_dir, $plugin_basename);
 }
 
 unset($avh_em_permalinks_requirements_check);

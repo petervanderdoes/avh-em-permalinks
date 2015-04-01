@@ -2,12 +2,12 @@
 
 namespace Avh\EmPermalink;
 
-use Avh\Contracts\Foundation\ApplicationInterface;
-use Avh\Support\ProviderRepository;
+use Avh\EmPermalink\Contracts\Foundation\ApplicationInterface;
+use Avh\EmPermalink\Support\ProviderRepository;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
-use RpsCompetition\Helpers\CommonHelper;
+use Avh\EmPermalink\Helpers\CommonHelper;
 
 /**
  * Class Application
@@ -96,23 +96,6 @@ class Application extends Container implements ApplicationInterface
         $this->instance('config', $config = new Repository($items));
 
         $this->config['app.providers'] = [
-            '\RpsCompetition\Frontend\Requests\BanquetEntries\RequestBanquetEntriesServiceProvider',
-            '\RpsCompetition\Frontend\Requests\EditTitle\RequestEditTitleServiceProvider',
-            '\RpsCompetition\Frontend\Requests\MyEntries\RequestMyEntriesServiceProvider',
-            '\RpsCompetition\Frontend\Requests\ParseQuery\ParseQueryServiceProvider',
-            '\RpsCompetition\Frontend\Requests\UploadImage\RequestUploadImageServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\AllScores\AllScoresServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\BanquetEntries\BanquetEntriesServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\CategoryWinners\CategoryWinnersServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\EditTitle\EditTitleServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\MonthlyEntries\MonthlyEntriesServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\MonthlyWinners\MonthlyWinnersServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\MyEntries\MyEntriesServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\PersonWinners\PersonWinnersServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\ScoresCurrentUser\ScoresCurrentUserServiceProvider',
-            '\RpsCompetition\Frontend\Shortcodes\UploadImage\UploadImageServiceProvider',
-            '\RpsCompetition\Db\DbServiceProvider',
-            '\RpsCompetition\Frontend\Requests\RpsClient\RpsClientServiceProvider',
         ];
         $this->registerCoreContainerAliases();
         $this->registerConfiguredProviders();
@@ -255,7 +238,7 @@ class Application extends Container implements ApplicationInterface
     public function registerConfiguredProviders()
     {
         $upload_dir_info = wp_upload_dir();
-        $manifestPath_directory = $upload_dir_info['basedir'] . '/avh-rps/framework';
+        $manifestPath_directory = $upload_dir_info['basedir'] . '/avh-em-permalinks/framework';
         CommonHelper::createDirectory($manifestPath_directory);
         $manifestPath = $manifestPath_directory . '/services.json';
 
