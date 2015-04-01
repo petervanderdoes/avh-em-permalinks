@@ -37,6 +37,7 @@ class FrontEnd
         '%event_name%'     => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT, 'replacement' => ''],
         '%event_owner%'    => ['regex' => '([^/]+)', 'query' => 'event_owner', 'replacement' => ''],
         '%event_location%' => ['regex' => '([^/]+)', 'query' => 'location', 'replacement' => ''],
+        '%event_category%' => ['regex' => '([^/]+)', 'query' => 'event_category', 'replacement' => ''],
     ];
     private $structure_tags_locations = [
         '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION]
@@ -79,14 +80,14 @@ class FrontEnd
                     $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
                     $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
 
-                    if (strpos($post_link, '%category%') !== false) {
+                    if (strpos($post_link, '%event_category%') !== false) {
 
                         $EM_Categories = $EM_Event->get_categories();
                         if ($EM_Categories->categories) {
                             usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
                             $category_object = $EM_Categories->categories[0];
                             $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
-                            $this->structure_tags_events['%category%']['replacement'] = $category_object->slug;
+                            $this->structure_tags_events['%event_category%']['replacement'] = $category_object->slug;
                         }
                     }
 
@@ -247,6 +248,9 @@ class FrontEnd
                     $query[] = ['key' => '_start_ts', 'value' => $check_date_end, 'compare' => '<'];
                 }
 
+                if (isset ($wp_query->query_vars['event_category'])) {
+
+                }
                 if (!empty($query) && is_array($query)) {
                     $wp_query->query_vars['meta_query'] = $query;
                 }
