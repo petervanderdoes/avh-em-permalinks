@@ -34,7 +34,6 @@ class FrontEnd
         '%event_year%'     => ['regex' => '([0-9]{4})', 'query' => 'event_year'],
         '%event_monthnum%' => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum'],
         '%event_day%'      => ['regex' => '([0-9]{1,2})', 'query' => 'event_day'],
-        '%event_hour%'     => ['regex' => '([0-9]{1,2})', 'query' => 'event_year'],
         '%event_name%'     => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT],
         '%event_owner%'    => ['regex' => '([^/]+)', 'query' => 'event_owner'],
         '%event_location%' => ['regex' => '([^/]+)', 'query' => 'location'],
@@ -72,17 +71,7 @@ class FrontEnd
             case EM_POST_TYPE_EVENT:
 
                 $EM_Event = em_get_event($post->ID, $search_by = 'post_id');
-                $rewritecode = [
-                    '%event_year%',
-                    '%event_monthnum%',
-                    '%event_day%',
-                    '%event_hour%',
-                    '%event_minute%',
-                    '%event_second%',
-                    '%event_owner%',
-                    '%event_location%',
-                    '%event_name%'
-                ];
+                $rewritecode = array_keys($this->structure_tags_events);
 
                 if ('' != $post_link && !in_array($EM_Event->post_status, ['draft', 'pending', 'auto-draft'])) {
                     $unixtime = strtotime($EM_Event->post_date);
@@ -122,15 +111,12 @@ class FrontEnd
                         $date[0],
                         $date[1],
                         $date[2],
-                        $date[3],
-                        $date[4],
-                        $date[5],
+                        $event_name,
                         $author,
                         $eventlocation,
-                        $event_name
                     ];
 
-                    $rewritereplace = array_merge($rewritereplace_wordpress, $rewritereplace_event);
+                    $rewritereplace = $rewritereplace_event;
                     $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
                     $post_link = user_trailingslashit($post_link, 'single');
                 } else { // if they're not using the fancy permalink option
