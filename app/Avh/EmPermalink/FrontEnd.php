@@ -31,12 +31,12 @@ class FrontEnd
      * @var array
      */
     private $structure_tags_events = [
-        '%event_year%'     => ['regex' => '([0-9]{4})', 'query' => 'event_year'],
-        '%event_monthnum%' => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum'],
-        '%event_day%'      => ['regex' => '([0-9]{1,2})', 'query' => 'event_day'],
-        '%event_name%'     => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT],
-        '%event_owner%'    => ['regex' => '([^/]+)', 'query' => 'event_owner'],
-        '%event_location%' => ['regex' => '([^/]+)', 'query' => 'location'],
+        '%event_year%'     => ['regex' => '([0-9]{4})', 'query' => 'event_year', 'replacement' => '0'],
+        '%event_monthnum%' => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum', 'replacement' => '0'],
+        '%event_day%'      => ['regex' => '([0-9]{1,2})', 'query' => 'event_day', 'replacement' => '0'],
+        '%event_name%'     => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT, 'replacement' => ''],
+        '%event_owner%'    => ['regex' => '([^/]+)', 'query' => 'event_owner', 'replacement' => ''],
+        '%event_location%' => ['regex' => '([^/]+)', 'query' => 'location', 'replacement' => ''],
     ];
     private $structure_tags_locations = [
         '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION]
@@ -74,10 +74,11 @@ class FrontEnd
                 $rewritecode = array_keys($this->structure_tags_events);
 
                 if ('' != $post_link && !in_array($EM_Event->post_status, ['draft', 'pending', 'auto-draft'])) {
-                    $unixtime = strtotime($EM_Event->post_date);
-                    $unixtime_start = strtotime($EM_Event->event_start_date . ' ' . $EM_Event->event_start_time);
+                    $event_start_date = new \DateTime($EM_Event->event_start_date);
+                    $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
+                    $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
+                    $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
 
-                    $category = '';
                     if (strpos($post_link, '%category%') !== false) {
 
                         $EM_Categories = $EM_Event->get_categories();
@@ -85,33 +86,27 @@ class FrontEnd
                             usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
                             $category_object = $EM_Categories->categories[0];
                             $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
-                            $category = $category_object->slug;
+                            $this->structure_tags_events['%category%']['replacement'] = $category_object->slug;
                         }
                     }
 
-                    $eventlocation = '';
                     if (strpos($post_link, '%event_location%') !== false) {
                         $EM_Location = em_get_location($EM_Event->location_id);
-                        $eventlocation = $EM_Location->location_slug;
-                    }
-                    $author = '';
-                    if (strpos($post_link, '%event_owner%') !== false) {
-                        $authordata = get_userdata($EM_Event->event_owner);
-                        $author = $authordata->user_nicename;
-                    }
-                    if (strpos($post_link, '%event_name%') !== false) {
-                        $event_name = $EM_Event->event_slug;
+                        $this->structure_tags_events['%event_location%']['replacement'] = $EM_Location->location_slug;
                     }
 
-                    $date = explode(" ", date('Y m d H i s', $unixtime_start));
-                    $rewritereplace_event = [
-                        $date[0],
-                        $date[1],
-                        $date[2],
-                        $event_name,
-                        $author,
-                        $eventlocation,
-                    ];
+                    if (strpos($post_link, '%event_owner%') !== false) {
+                        $authordata = get_userdata($EM_Event->event_owner);
+                        $this->structure_tags_events['%event_owner%']['replacement'] = $authordata->user_nicename;
+                    }
+
+                    if (strpos($post_link, '%event_name%') !== false) {
+                        $this->structure_tags_events['%event_name%']['replacement'] = $EM_Event->event_slug;
+                    }
+
+                    foreach ($this->structure_tags_events as $structured_tag => $information) {
+                        $rewritereplace_event[] = $information['replacement'];
+                    }
 
                     $rewritereplace = $rewritereplace_event;
                     $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
@@ -128,7 +123,6 @@ class FrontEnd
 
                 if ('' != $post_link && !in_array($post->post_status, ['draft', 'pending', 'auto-draft'])) {
                     $unixtime = strtotime($EM_Location->post_date);
-                    $date = explode(" ", date('Y m d H i s', $unixtime));
 
                     $rewritereplace_location = [$EM_Location->location_slug];
 
