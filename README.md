@@ -14,9 +14,7 @@ EM lacks support for custom permalink for events. This plugin will take care of 
 
 # ATTENTION
 
-I been using the code of this plugin in a theme and it worked there. I quickly created a plugin and currently I'm not 
-even sure if the plugin installs without errors.  
-Due to time retsraints I didn't test the plugin at all and won't be able to test untill mid April 2015. I just wanted 
+Due to time restraints I didn't test the plugin completely and won't be able to test untill mid April 2015. I just wanted 
 to put it out here in case there are adventourus people out there that want to help out.
 If things don't work, just delete the plugin and revert any changes to EM setting you made and you're back to normal.
 
@@ -44,8 +42,12 @@ in WordPress itself.
 ## Implemented structure tags
 
 ### Events
-- %event_year%
-- %event_name%
+- '%event_year%'
+- '%event_monthnum%' 
+- '%event_day%'
+- '%event_name%'
+- '%event_owner%'
+- '%event_location%'
 
 ### Locations
 - %location_name%
