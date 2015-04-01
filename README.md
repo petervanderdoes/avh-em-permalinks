@@ -12,13 +12,21 @@ EM lacks support for custom permalink for events. This plugin will take care of 
 - PHP 5.4 or higher
 - WordPress plugin Event Manager 5.5.5 or higher
 
+# ATTENTION
+
+I been using the code of this plugin in a theme and it worked there. I quickly created a plugin and currently I'm not 
+even sure if the plugin installs without errors.  
+Due to time retsraints I didn't test the plugin at all and won't be able to test untill mid April 2015. I just wanted 
+to put it out here in case there are adventourus people out there that want to help out.
+If things don't work, just delete the plugin and revert any changes to EM setting you made and you're back to normal.
+
 ## Usage
 After you install and activate this plugin you need to change the permalink setting in EM. The structure tags look 
 similar as the structure tags in WordPress. Also make sure you end your permalink with the *name* tag. Check out the 
 [Implemented structure tags](#implemented-structure-tags) to see what tags are available.
 
 ## Important
-Currently this plugin is in beta, things might break.  
+Currently this plugin is in alpha, things might break and they probably will.  
 This plugin does not cover every possibility imaginable when it comes to extending the permalinks.  
 I implemented structure tags for the permalinks that I needed at the time I wrote this plugin, March 31, 2015.  
 
