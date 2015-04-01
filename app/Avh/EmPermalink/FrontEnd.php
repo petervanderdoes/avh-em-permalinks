@@ -103,9 +103,6 @@ class FrontEnd
                         $event_name = $EM_Event->event_slug;
                     }
 
-                    $date = explode(" ", date('Y m d H i s', $unixtime));
-                    $rewritereplace_wordpress = [$date[0], $date[1], $date[2], $date[3], $date[4], $date[5], $category];
-
                     $date = explode(" ", date('Y m d H i s', $unixtime_start));
                     $rewritereplace_event = [
                         $date[0],
@@ -126,18 +123,16 @@ class FrontEnd
 
             case EM_POST_TYPE_LOCATION:
                 $EM_Location = em_get_location($post->ID, $search_by = 'post_id');
-                $rewritecode_wordpress = ['%year%', '%monthnum%', '%day%', '%hour%', '%minute%', '%second%'];
-                $rewritecode_events = ['%location_name%'];
-                $rewritecode = array_merge($rewritecode_wordpress, $rewritecode_events);
+                $rewritecode_location = array_keys($this->structure_tags_locations);
+                $rewritecode = $rewritecode_location;
 
                 if ('' != $post_link && !in_array($post->post_status, ['draft', 'pending', 'auto-draft'])) {
                     $unixtime = strtotime($EM_Location->post_date);
                     $date = explode(" ", date('Y m d H i s', $unixtime));
 
-                    $rewritereplace_wordpress = [$date[0], $date[1], $date[2], $date[3], $date[4], $date[5]];
-                    $rewritereplace_locations = [$EM_Location->location_slug];
+                    $rewritereplace_location = [$EM_Location->location_slug];
 
-                    $rewritereplace = array_merge($rewritereplace_wordpress, $rewritereplace_locations);
+                    $rewritereplace = $rewritereplace_location;
                     $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
                     $post_link = user_trailingslashit($post_link, 'single');
                 } else { // if they're not using the fancy permalink option
