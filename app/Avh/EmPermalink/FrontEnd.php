@@ -22,6 +22,158 @@ class FrontEnd
     }
 
     /**
+     * Rewrite the permalink for the custom post types.
+     *
+     * @param string   $post_link The post's permalink.
+     * @param \WP_Post $post      The post in question.
+     * @param bool     $leavename Whether to keep the post name.
+     * @param bool     $sample    Is it a sample permalink.
+     *
+     * @return mixed|string|void
+     */
+    public function filterPermalink($post_link, $post, $leavename, $sample)
+    {
+        switch ($post->post_type) {
+            case EM_POST_TYPE_EVENT:
+
+                $EM_Event = em_get_event($post->ID, $search_by = 'post_id');
+                $rewritecode_wordpress = [
+                    '%year%',
+                    '%monthnum%',
+                    '%day%',
+                    '%hour%',
+                    '%minute%',
+                    '%second%',
+                    '%category%'
+                ];
+                $rewritecode_events = [
+                    '%event_year%',
+                    '%event_monthnum%',
+                    '%event_day%',
+                    '%event_hour%',
+                    '%event_minute%',
+                    '%event_second%',
+                    '%event_owner%',
+                    '%event_location%',
+                    '%event_name%'
+                ];
+                $rewritecode = array_merge($rewritecode_wordpress, $rewritecode_events);
+
+                if ('' != $post_link && !in_array($EM_Event->post_status, ['draft', 'pending', 'auto-draft'])) {
+                    $unixtime = strtotime($EM_Event->post_date);
+                    $unixtime_start = strtotime($EM_Event->event_start_date . ' ' . $EM_Event->event_start_time);
+
+                    $category = '';
+                    if (strpos($post_link, '%category%') !== false) {
+
+                        $EM_Categories = $EM_Event->get_categories();
+                        if ($EM_Categories->categories) {
+                            usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
+                            $category_object = $EM_Categories->categories[0];
+                            $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
+                            $category = $category_object->slug;
+                            if (isset($category_object->parent)) {
+                                $parent = $category_object->parent;
+                                $category = rps_EM_get_parents(
+                                        $parent,
+                                        false,
+                                        '/',
+                                        true,
+                                        [],
+                                        EM_TAXONOMY_CATEGORY
+                                    ) . $category;
+                            }
+                        }
+                    }
+
+                    $eventlocation = '';
+                    if (strpos($post_link, '%event_location%') !== false) {
+                        $EM_Location = em_get_location($EM_Event->location_id);
+                        $eventlocation = $EM_Location->location_slug;
+                    }
+                    $author = '';
+                    if (strpos($post_link, '%event_owner%') !== false) {
+                        $authordata = get_userdata($EM_Event->event_owner);
+                        $author = $authordata->user_nicename;
+                    }
+                    if (strpos($post_link, '%event_name%') !== false) {
+                        $event_name = $EM_Event->event_slug;
+                    }
+
+                    $date = explode(" ", date('Y m d H i s', $unixtime));
+                    $rewritereplace_wordpress = [$date[0], $date[1], $date[2], $date[3], $date[4], $date[5], $category];
+
+                    $date = explode(" ", date('Y m d H i s', $unixtime_start));
+                    $rewritereplace_event = [
+                        $date[0],
+                        $date[1],
+                        $date[2],
+                        $date[3],
+                        $date[4],
+                        $date[5],
+                        $author,
+                        $eventlocation,
+                        $event_name
+                    ];
+
+                    $rewritereplace = array_merge($rewritereplace_wordpress, $rewritereplace_event);
+                    $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
+                    $post_link = user_trailingslashit($post_link, 'single');
+                } else { // if they're not using the fancy permalink option
+                    $post_link = home_url('?event=' . $EM_Event->event_slug);
+                }
+                break;
+
+            case EM_POST_TYPE_LOCATION:
+                $EM_Location = em_get_location($post->ID, $search_by = 'post_id');
+                $rewritecode_wordpress = ['%year%', '%monthnum%', '%day%', '%hour%', '%minute%', '%second%'];
+                $rewritecode_events = ['%location_name%'];
+                $rewritecode = array_merge($rewritecode_wordpress, $rewritecode_events);
+
+                if ('' != $post_link && !in_array($post->post_status, ['draft', 'pending', 'auto-draft'])) {
+                    $unixtime = strtotime($EM_Location->post_date);
+                    $date = explode(" ", date('Y m d H i s', $unixtime));
+
+                    $rewritereplace_wordpress = [$date[0], $date[1], $date[2], $date[3], $date[4], $date[5]];
+                    $rewritereplace_locations = [$EM_Location->location_slug];
+
+                    $rewritereplace = array_merge($rewritereplace_wordpress, $rewritereplace_locations);
+                    $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
+                    $post_link = user_trailingslashit($post_link, 'single');
+                } else { // if they're not using the fancy permalink option
+                    $post_link = home_url('?p=' . $EM_Location->location_id);
+                }
+                break;
+        }
+
+        return $post_link;
+    }
+
+    /**
+     * Rewrite the permalink for taxonomies.
+     *
+     * @param string $termlink Term link URL.
+     * @param object $term     Term object.
+     * @param string $taxonomy Taxonomy slug.
+     *
+     * @return mixed|string
+     */
+    public function filterTermLink($termlink, $term, $taxonomy)
+    {
+        switch ($taxonomy) {
+            case EM_TAXONOMY_CATEGORY:
+                if (strpos($termlink, '%category_name%') !== false) {
+                    $rewritecode = ['%category_name%'];
+                    $rewritereplace = [$term->slug];
+                    $termlink = str_replace($rewritecode, $rewritereplace, $termlink);
+                    $termlink = user_trailingslashit($termlink, 'single');
+                }
+        }
+
+        return $termlink;
+    }
+
+    /**
      * Setup permalinks
      *
      * Create new placeholders and add the default permalink
@@ -507,6 +659,8 @@ class FrontEnd
         add_action('init', [$this, 'registerPostTypes'], 11);
         add_filter('query_vars', [$this, 'setupQueryVars'], 10, 1);
         add_action('parse_query', [$this, 'parseQuery'], 999);
+        add_filter('post_type_link', [$this, 'filterPermalink'], 10, 4);
+        add_filter('term_link', [$this, 'filterTermLink'], 10, 3);
     }
 
     /**
