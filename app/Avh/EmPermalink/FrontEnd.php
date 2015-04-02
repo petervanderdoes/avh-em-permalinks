@@ -68,16 +68,19 @@ class FrontEnd
      */
     public function filterPermalink($post_link, $post, $leavename, $sample)
     {
-        
-        switch ($post->post_type) {
-            case EM_POST_TYPE_EVENT:
+        global $wp_rewrite;
 
-                $post_link = $this->filterPermalinkEvent($post_link, $post);
-                break;
+        if ($wp_rewrite->permalink_structure !== '') {
+            switch ($post->post_type) {
+                case EM_POST_TYPE_EVENT:
 
-            case EM_POST_TYPE_LOCATION:
-                $post_link = $this->filterPermalinkLocation($post_link, $post);
-                break;
+                    $post_link = $this->filterPermalinkEvent($post_link, $post);
+                    break;
+
+                case EM_POST_TYPE_LOCATION:
+                    $post_link = $this->filterPermalinkLocation($post_link, $post);
+                    break;
+            }
         }
 
         return $post_link;
