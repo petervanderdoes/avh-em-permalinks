@@ -123,8 +123,6 @@ class FrontEnd
                 $rewritecode = $rewritecode_location;
 
                 if ('' != $post_link && !in_array($post->post_status, ['draft', 'pending', 'auto-draft'])) {
-                    $unixtime = strtotime($EM_Location->post_date);
-
                     $rewritereplace_location = [$EM_Location->location_slug];
 
                     $rewritereplace = $rewritereplace_location;
@@ -137,6 +135,17 @@ class FrontEnd
         }
 
         return $post_link;
+    }
+
+    public function filterRedirectCanonical($redirect_url, $requested_url)
+    {
+        global $wp_query;
+        $em_post_type = [EM_POST_TYPE_EVENT => true, EM_POST_TYPE_LOCATION => true];
+        $post_type = $wp_query->post_type;
+        if (array_key_exists($post_type, $em_post_type)) {
+            return false;
+        }
+        return $redirect_url;
     }
 
     /**
@@ -221,7 +230,6 @@ class FrontEnd
                 }
                 $year = date('Y');
                 $month = '01';
-                $day = '01';
                 $is_date = false;
                 if (isset ($wp_query->query_vars['event_year'])) {
                     $is_date = true;
@@ -249,7 +257,6 @@ class FrontEnd
                 }
 
                 if (isset ($wp_query->query_vars['event_category'])) {
-
                 }
                 if (!empty($query) && is_array($query)) {
                     $wp_query->query_vars['meta_query'] = $query;
@@ -269,6 +276,7 @@ class FrontEnd
         add_action('parse_query', [$this, 'parseQuery'], 999);
         add_filter('post_type_link', [$this, 'filterPermalink'], 10, 4);
         add_filter('term_link', [$this, 'filterTermLink'], 10, 3);
+        add_filter('redirect_canonical', [$this, 'filterRedirectCanonical'], 10, 2);
     }
 
     /**
