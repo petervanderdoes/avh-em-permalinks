@@ -49,6 +49,7 @@ class Plugin
         add_action('init', [$this, 'actionInit'], 10);
         $this->setSettings();
         $this->removeEventManagerActionFilter();
+        new HandlePermalinks();
         if (is_admin()) {
             add_action('activate_' . $this->settings->get('plugin_basename'), [$this, 'pluginActivation']);
             add_action('deactivate_' . $this->settings->get('plugin_basename'), [$this, 'pluginDeactivation']);
