@@ -305,7 +305,9 @@ class HandlePermalinks
 
         $rewritereplace = $rewritereplace_event;
         $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
-        $post_link = user_trailingslashit($post_link, 'single');
+        if ('draft' != $post->post_status) {
+            $post_link = user_trailingslashit($post_link, 'single');
+        }
 
         return $post_link;
     }
@@ -326,7 +328,17 @@ class HandlePermalinks
         $rewritecode_location = array_keys($this->structure_tags_locations);
         $rewritecode = $rewritecode_location;
 
-        $rewritereplace_location = [$EM_Location->location_slug];
+        if (strpos($post_link, '%location_name%') !== false) {
+            if (!$leavename) {
+                $this->structure_tags_locations['%location_name%']['replacement'] = $EM_Location->location_slug;
+            } else {
+                $this->structure_tags_locations['%location_name%']['replacement'] = '%postname%';
+            }
+        }
+
+        foreach ($this->structure_tags_events as $structured_tag => $information) {
+            $rewritereplace_location[] = $information['replacement'];
+        }
 
         $rewritereplace = $rewritereplace_location;
         $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
