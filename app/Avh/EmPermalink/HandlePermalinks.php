@@ -68,11 +68,11 @@ class HandlePermalinks
      *
      * @return mixed|string|void
      */
-    public function filterPermalink($post_link, $post, $leavename, $sample)
+    public function filterPermalink($post_link, $post, $leavename = false, $sample = false)
     {
         global $wp_rewrite;
 
-        if ($wp_rewrite->permalink_structure === '') {
+        if ($wp_rewrite->permalink_structure !== '') {
             switch ($post->post_type) {
                 case EM_POST_TYPE_EVENT:
 
@@ -227,6 +227,7 @@ class HandlePermalinks
         add_filter('query_vars', [$this, 'setupQueryVars'], 10, 1);
         add_action('parse_query', [$this, 'parseQuery'], 999);
         add_filter('post_type_link', [$this, 'filterPermalink'], 10, 4);
+        add_filter('post_link', [$this, 'filterPermalink'], 10, 3);
         add_filter('term_link', [$this, 'filterTermLink'], 10, 3);
         add_filter('redirect_canonical', [$this, 'filterRedirectCanonical'], 10, 2);
     }
@@ -291,7 +292,11 @@ class HandlePermalinks
         }
 
         if (strpos($post_link, '%event_name%') !== false) {
-            $this->structure_tags_events['%event_name%']['replacement'] = $EM_Event->event_slug;
+            if (!$leavename) {
+                $this->structure_tags_events['%event_name%']['replacement'] = $EM_Event->event_slug;
+            } else {
+                $this->structure_tags_events['%event_name%']['replacement'] = '%postname%';
+            }
         }
 
         foreach ($this->structure_tags_events as $structured_tag => $information) {

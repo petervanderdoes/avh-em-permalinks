@@ -8,7 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Avh\\EmPermalink\\Application' => $baseDir . '/app/Avh/EmPermalink/Application.php',
     'Avh\\EmPermalink\\Contracts\\Foundation\\ApplicationInterface' => $baseDir . '/app/Avh/EmPermalink/Contracts/Foundation/Application.php',
-    'Avh\\EmPermalink\\FrontEnd' => $baseDir . '/app/Avh/EmPermalink/FrontEnd.php',
+    'Avh\\EmPermalink\\HandlePermalinks' => $baseDir . '/app/Avh/EmPermalink/HandlePermalinks.php',
     'Avh\\EmPermalink\\Helpers\\CommonHelper' => $baseDir . '/app/Avh/EmPermalink/Helpers/CommonHelper.php',
     'Avh\\EmPermalink\\Plugin' => $baseDir . '/app/Avh/EmPermalink/Plugin.php',
     'Avh\\EmPermalink\\RequirementsCheck' => $baseDir . '/app/Avh/EmPermalink/RequirementsCheck.php',
