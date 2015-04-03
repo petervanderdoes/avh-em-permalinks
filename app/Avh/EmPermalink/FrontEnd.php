@@ -28,6 +28,9 @@ class FrontEnd
      * Query variables that rewrite tags map to, see {@link WP_Rewrite::$rewritecode}.
      * The query should NOT end with the = sign, we add this later.
      *
+     * 'replacement'
+     * The replacement for the structure tag.
+     *
      * @var array
      */
     private $structure_tags_events = [
@@ -40,10 +43,10 @@ class FrontEnd
         '%event_category%' => ['regex' => '([^/]+)', 'query' => 'event_category', 'replacement' => ''],
     ];
     private $structure_tags_locations = [
-        '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION]
+        '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION, 'replacement' => '']
     ];
     private $structure_tags_terms = [
-        '%category_name%' => ['regex' => '([^/]+)', 'query' => EM_TAXONOMY_CATEGORY]
+        '%category_name%' => ['regex' => '([^/]+)', 'query' => EM_TAXONOMY_CATEGORY, 'replacement' => '']
     ];
 
     /**
@@ -71,14 +74,25 @@ class FrontEnd
         global $wp_rewrite;
 
         if ($wp_rewrite->permalink_structure !== '') {
+            $draft_or_pending = isset($post->post_status) && in_array(
+                    $post->post_status,
+                    ['draft', 'pending', 'auto-draft']
+                );
             switch ($post->post_type) {
                 case EM_POST_TYPE_EVENT:
 
-                    $post_link = $this->filterPermalinkEvent($post_link, $post);
+                    $post_link = $this->filterPermalinkEvent($post_link, $post, $leavename, $sample, $draft_or_pending);
                     break;
 
                 case EM_POST_TYPE_LOCATION:
-                    $post_link = $this->filterPermalinkLocation($post_link, $post);
+                    $post_link = $this->filterPermalinkLocation(
+                        $post_link,
+                        $post,
+                        $leavename,
+                        $sample,
+                        $draft_or_pending
+                    )
+                    ;
                     break;
             }
         }
@@ -249,18 +263,21 @@ class FrontEnd
     /**
      * Filter the permalink for Event posts.
      *
-     * @param string   $post_link The post's permalink.
-     * @param \WP_Post $post      The post in question.
+     * @param string   $post_link        The post's permalink.
+     * @param \WP_Post $post             The post in question.
+     * @param bool     $leavename        Whether to keep the post name.
+     * @param bool     $sample           Is it a sample permalink.
+     * @param bool     $draft_or_pending Is the past status draft or pending.
      *
      * @return mixed|string|void
      */
-    private function filterPermalinkEvent($post_link, $post)
+    private function filterPermalinkEvent($post_link, $post, $leavename, $sample, $draft_or_pending)
     {
         $rewritereplace_event = [];
         $EM_Event = em_get_event($post->ID, $search_by = 'post_id');
         $rewritecode = array_keys($this->structure_tags_events);
 
-        if ('' != $post_link && !in_array($EM_Event->post_status, ['draft', 'pending', 'auto-draft'])) {
+        if (!empty($post_link) && (!$draft_or_pending || $sample)) {
             $event_start_date = new \DateTime($EM_Event->event_start_date);
             $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
             $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
@@ -308,18 +325,21 @@ class FrontEnd
     /**
      * Filter the permalink for Location posts.
      *
-     * @param string   $post_link The post's permalink.
-     * @param \WP_Post $post      The post in question.
+     * @param string   $post_link        The post's permalink.
+     * @param \WP_Post $post             The post in question.
+     * @param bool     $leavename        Whether to keep the post name.
+     * @param bool     $sample           Is it a sample permalink.
+     * @param bool     $draft_or_pending Is the past status draft or pending.
      *
      * @return mixed|string|void
      */
-    private function filterPermalinkLocation($post_link, $post)
+    private function filterPermalinkLocation($post_link, $post, $leavename, $sample, $draft_or_pending)
     {
         $EM_Location = em_get_location($post->ID, $search_by = 'post_id');
         $rewritecode_location = array_keys($this->structure_tags_locations);
         $rewritecode = $rewritecode_location;
 
-        if ('' != $post_link && !in_array($post->post_status, ['draft', 'pending', 'auto-draft'])) {
+        if (!empty($post_link) && (!$draft_or_pending || $sample)) {
             $rewritereplace_location = [$EM_Location->location_slug];
 
             $rewritereplace = $rewritereplace_location;
