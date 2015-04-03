@@ -54,7 +54,7 @@ class Plugin
             add_action('activate_' . $this->settings->get('plugin_basename'), [$this, 'pluginActivation']);
             add_action('deactivate_' . $this->settings->get('plugin_basename'), [$this, 'pluginDeactivation']);
         } else {
-            new FrontEnd($this->app);
+            //new FrontEnd($this->app);
         }
     }
 
