@@ -165,10 +165,10 @@ class HandlePermalinks
      *
      * Some of it has already been parsed by Event Manager, we just add our added query vars.
      *
+     * @param \WP_Query $wp_query Passed by reference.
      */
-    function parseQuery()
+    function parseQuery($wp_query)
     {
-        global $wp_query;
         if (!is_admin()) {
             if (!empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring') && (empty($wp_query->query_vars['post_status']) || !in_array(
                         $wp_query->query_vars['post_status'],
