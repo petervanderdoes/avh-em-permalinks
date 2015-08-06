@@ -1,0 +1,11 @@
+sass
+tests
+.settings
+.editorconfig
+.scrutinizer.yml
+.travis.yml
+composer.json
+composer.lock
+config.rb
+phpunit.xml
+/CHANGES.md
