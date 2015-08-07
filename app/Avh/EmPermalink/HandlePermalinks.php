@@ -189,9 +189,9 @@ class HandlePermalinks
                     $start_date = new \DateTime($year . '/01/01');
                     $end_date = new \DateTime($year . '/12/31');
                 }
-                if (isset ($wp_query->query_vars['event_month'])) {
+                if (isset ($wp_query->query_vars['event_monthnum'])) {
                     $is_date = true;
-                    $month = $wp_query->query_vars['event_month'];
+                    $month = $wp_query->query_vars['event_monthnum'];
                     $start_date = new \DateTime($year . '/' . $month . '/01');
                     $end_date = new \DateTime($year . '/' . $month . '/31');
                 }
@@ -203,9 +203,12 @@ class HandlePermalinks
                 }
                 if ($is_date) {
                     $check_date_start = $start_date->format('U');
+                    $end_date->add(new \DateInterval('PT23H59M59S'));
                     $check_date_end = $end_date->format('U');
-                    $query[] = ['key' => '_start_ts', 'value' => $check_date_start, 'compare' => '>='];
-                    $query[] = ['key' => '_start_ts', 'value' => $check_date_end, 'compare' => '<'];
+                    $query[] = ['key'     => '_start_ts',
+                                'value'   => array($check_date_start, $check_date_end),
+                                'compare' => 'BETWEEN'
+                    ];
                 }
 
                 if (isset ($wp_query->query_vars['event_category'])) {
