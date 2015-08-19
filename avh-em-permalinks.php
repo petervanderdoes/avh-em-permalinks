@@ -40,8 +40,6 @@ use Avh\EmPermalink\RequirementsCheck;
  */
 require __DIR__ . '/vendor/autoload.php';
 
-
-
 $avh_em_permalinks_requirements_check = new RequirementsCheck(
     [
         'title' => 'AVH Event Manager Permalinks',
