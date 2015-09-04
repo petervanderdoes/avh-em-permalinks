@@ -105,6 +105,7 @@ class ProviderRepository
 
             return array_merge(['when' => []], $manifest);
         }
+
         return null;
     }
 
@@ -133,8 +134,7 @@ class ProviderRepository
         $this->files->put(
             $this->manifestPath,
             json_encode($manifest, JSON_PRETTY_PRINT)
-        )
-        ;
+        );
 
         return $manifest;
     }

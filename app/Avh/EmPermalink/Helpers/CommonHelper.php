@@ -70,40 +70,6 @@ class CommonHelper
     }
 
     /**
-     * Get the thumbnail to display on the My Entries page.
-     *
-     * @param $current_competition
-     *
-     * @return mixed
-     */
-    public static function getCompetitionThumbnail($current_competition)
-    {
-        $image = [];
-        $image['Color Digital'] = '/thumb-comp-digital-color.jpg';
-        $image['Color Prints'] = '/thumb-comp-print-color.jpg';
-        $image['B&W Digital'] = '/thumb-comp-digital-bw.jpg';
-        $image['B&W Prints'] = '/thumb-comp-print-bw.jpg';
-        $img = $image[$current_competition->Medium];
-
-        return $img;
-    }
-
-    /**
-     * Get the Dynamic Pages.
-     *
-     * These are the pages where we implement javascript to get different competitions and seasons within the page.
-     *
-     * @return array
-     */
-    public static function getDynamicPages()
-    {
-        $options = get_option('avh-rps');
-        $pages_array = [$options['monthly_entries_post_id'] => true, $options['monthly_winners_post_id'] => true];
-
-        return $pages_array;
-    }
-
-    /**
      * Improve the default WordPress plugins_url.
      * The standard function requires a file at the end of the 2nd parameter.
      *
@@ -119,58 +85,6 @@ class CommonHelper
         }
 
         return plugins_url($file, $directory);
-    }
-
-    /**
-     * Get the user classification based on the medium
-     *
-     * @param integer $userID
-     * @param string  $medium
-     *
-     * @return string
-     */
-    public static function getUserClassification($userID, $medium)
-    {
-        switch ($medium) {
-            case 'B&W Digital':
-                $index = get_user_meta($userID, 'rps_class_bw', true);
-                break;
-            case 'Color Digital':
-                $index = get_user_meta($userID, 'rps_class_color', true);
-                break;
-            case 'B&W Prints':
-                $index = get_user_meta($userID, 'rps_class_print_bw', true);
-                break;
-            case 'Color Prints':
-                $index = get_user_meta($userID, 'rps_class_print_color', true);
-                break;
-            default:
-                $index = '';
-        }
-
-        return ucfirst($index);
-    }
-
-    /**
-     * Check if the user is a paid member
-     *
-     * @param integer|null $user_id UserID to check
-     *
-     * @return boolean true if a paid member, false if non-existing user or non-paid member.`
-     */
-    public static function isPaidMember($user_id = null)
-    {
-        if (is_numeric($user_id)) {
-            $user = get_user_by('id', $user_id);
-        } else {
-            $user = wp_get_current_user();
-        }
-
-        if (empty($user)) {
-            return false;
-        }
-
-        return in_array('s2member_level4', (array) $user->roles);
     }
 
     /**

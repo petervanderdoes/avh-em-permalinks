@@ -3,7 +3,7 @@
  * Plugin Name: AVH Event Manager Permalinks
  * Plugin URI:
  * Description: Create better permalink for Event Manager
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author:      Peter van der Does
  * Author URI:
  * License:     GPLv2+
@@ -39,8 +39,6 @@ use Avh\EmPermalink\RequirementsCheck;
  * loading of any our classes "manually". Feels great to relax.
  */
 require __DIR__ . '/vendor/autoload.php';
-
-
 
 $avh_em_permalinks_requirements_check = new RequirementsCheck(
     [

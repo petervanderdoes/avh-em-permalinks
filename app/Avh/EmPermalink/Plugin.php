@@ -108,8 +108,7 @@ class Plugin
             function () {
                 return new Repository();
             }
-        )
-        ;
+        );
     }
 
     /**
@@ -261,7 +260,7 @@ class Plugin
                 'not_found_in_trash' => __('No Events Found in Trash', 'dbem'),
                 'parent'             => __('Parent Event', 'dbem')
             ],
-            'menu_icon'           => EM_DIR_URI.'includes/images/calendar-16.png',
+            'menu_icon'           => EM_DIR_URI . 'includes/images/calendar-16.png',
             'yarpp_support'       => true
         ];
         if (get_option('dbem_recurrence_enabled')) {

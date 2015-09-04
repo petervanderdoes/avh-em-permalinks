@@ -3,11 +3,11 @@
 namespace Avh\EmPermalink;
 
 use Avh\EmPermalink\Contracts\Foundation\ApplicationInterface;
+use Avh\EmPermalink\Helpers\CommonHelper;
 use Avh\EmPermalink\Support\ProviderRepository;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
-use Avh\EmPermalink\Helpers\CommonHelper;
 
 /**
  * Class Application

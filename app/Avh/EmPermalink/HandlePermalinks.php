@@ -165,10 +165,10 @@ class HandlePermalinks
      *
      * Some of it has already been parsed by Event Manager, we just add our added query vars.
      *
+     * @param \WP_Query $wp_query Passed by reference.
      */
-    function parseQuery()
+    function parseQuery($wp_query)
     {
-        global $wp_query;
         if (!is_admin()) {
             if (!empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring') && (empty($wp_query->query_vars['post_status']) || !in_array(
                         $wp_query->query_vars['post_status'],
@@ -180,32 +180,55 @@ class HandlePermalinks
                 } else {
                     $query = [];
                 }
-                $year = date('Y');
-                $month = '01';
+                $start_year = '1970';
+                $end_year = '2038';
+                $start_month = '01';
+                $end_month = '12';
+                $start_day = '01';
+                $end_day = '31';
                 $is_date = false;
                 if (isset ($wp_query->query_vars['event_year'])) {
                     $is_date = true;
-                    $year = $wp_query->query_vars['event_year'];
-                    $start_date = new \DateTime($year . '/01/01');
-                    $end_date = new \DateTime($year . '/12/31');
+                    $start_year = $wp_query->query_vars['event_year'];
+                    $end_year = $start_year;
                 }
-                if (isset ($wp_query->query_vars['event_month'])) {
+                if (isset ($wp_query->query_vars['event_monthnum'])) {
                     $is_date = true;
-                    $month = $wp_query->query_vars['event_month'];
-                    $start_date = new \DateTime($year . '/' . $month . '/01');
-                    $end_date = new \DateTime($year . '/' . $month . '/31');
+                    $start_month = $wp_query->query_vars['event_monthnum'];
+                    $end_month = $start_month;
                 }
                 if (isset ($wp_query->query_vars['event_day'])) {
                     $is_date = true;
-                    $day = $wp_query->query_vars['event_day'];
-                    $start_date = new \DateTime($year . '/' . $month . '/' . $day);
-                    $end_date = new \DateTime($year . '/' . $month . '/' . $day);
+                    $start_day = $wp_query->query_vars['event_day'];
+                    $end_day = $start_day;
                 }
+
                 if ($is_date) {
-                    $check_date_start = $start_date->format('U');
-                    $check_date_end = $end_date->format('U');
-                    $query[] = ['key' => '_start_ts', 'value' => $check_date_start, 'compare' => '>='];
-                    $query[] = ['key' => '_start_ts', 'value' => $check_date_end, 'compare' => '<'];
+                    $start_date = $this->getDateTime($start_year, $start_month, $start_day);
+                    if ($start_date === false) {
+                        $wp_query->is_404 = true;
+                    }
+
+                    if ($start_day !== $end_day) {
+                        $end_date = $this->getDateTime($end_year, $end_month, $start_day);
+                        $end_date->modify('last day of this month');
+                    } else {
+                        $end_date = $this->getDateTime($end_year, $end_month, $end_day);
+                        if ($end_date === false) {
+                            $wp_query->is_404 = true;
+                        }
+                    }
+
+                    if (!$wp_query->is_404()) {
+                        $check_date_start = $start_date->format('U');
+                        $end_date->add(new \DateInterval('PT23H59M59S'));
+                        $check_date_end = $end_date->format('U');
+                        $query[] = [
+                            'key'     => '_start_ts',
+                            'value'   => array($check_date_start, $check_date_end),
+                            'compare' => 'BETWEEN'
+                        ];
+                    }
                 }
 
                 if (isset ($wp_query->query_vars['event_category'])) {
@@ -215,6 +238,31 @@ class HandlePermalinks
                 }
             }
         }
+    }
+
+    /**
+     * Get DateTime from given date.
+     *
+     * Returns false if the given date parameters are invalid.
+     *
+     * @param $year  string
+     * @param $month string
+     * @param $day   string
+     *
+     * @return bool|\DateTime
+     */
+    private function getDateTime($year, $month, $day)
+    {
+        $date = \DateTime::createFromFormat(
+            'Y/m/d H:i:s',
+            $year . '/' . $month . '/' . $day . '00:00:00'
+        );
+        $date_error = \DateTime::getLastErrors();
+        if (!empty($date_error['warning_count'])) {
+            return false;
+        }
+
+        return $date;
     }
 
     /**
