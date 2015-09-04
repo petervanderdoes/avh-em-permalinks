@@ -384,7 +384,7 @@ class HandlePermalinks
             }
         }
 
-        foreach ($this->structure_tags_events as $structured_tag => $information) {
+        foreach ($this->structure_tags_locations as $structured_tag => $information) {
             $rewritereplace_location[] = $information['replacement'];
         }
 
