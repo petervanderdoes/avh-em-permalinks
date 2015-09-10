@@ -13,6 +13,9 @@ use Illuminate\Config\Repository;
  */
 class Plugin
 {
+    /** @var Repository $settings */
+    private $settings;
+
     /**
      * Constructor.
      *
@@ -41,7 +44,6 @@ class Plugin
 
     /**
      * Run after the plugins are loaded.
-     *
      */
     public function load()
     {
@@ -75,7 +77,6 @@ class Plugin
      * Runs after we activate the plugin.
      *
      * @internal Hook: activate_
-     *
      */
     public function pluginActivation()
     {
@@ -86,7 +87,6 @@ class Plugin
      * Runs after we deactivate the plugin.
      *
      * @internal Hook: deactivate_
-     *
      */
     public function pluginDeactivation()
     {
@@ -95,13 +95,11 @@ class Plugin
 
     /**
      * Setup the bindings.
-     *
      */
     public function registerBindings()
     {
         /**
          * Setup Singleton classes
-         *
          */
         $this->app->singleton(
             'Settings',
@@ -113,7 +111,6 @@ class Plugin
 
     /**
      * Reregister the Events custom post types.
-     *
      * We'll be using a new rewrite functionality, making it possible to use our own placeholders.
      */
     public function registerPostTypes()
@@ -441,7 +438,6 @@ class Plugin
      * - Create Custom Post Type.
      * - Create Custom Taxonomies.
      * - Setup the rewrite rules.
-     *
      */
     private function removeEventManagerActionFilter()
     {

@@ -4,9 +4,9 @@ namespace Avh\EmPermalink\Helpers;
 /**
  * Class CommonHelper
  *
- * @package   RpsCompetition\Helpers
+ * @package   Avh\EmPermalink\Helpers
  * @author    Peter van der Does <peter@avirtualhome.com>
- * @copyright Copyright (c) 2014-2015, AVH Software
+ * @copyright Copyright (c) 2015, AVH Software
  */
 class CommonHelper
 {
@@ -85,23 +85,6 @@ class CommonHelper
         }
 
         return plugins_url($file, $directory);
-    }
-
-    /**
-     * Check if user pressed cancel and if so redirect the user
-     *
-     * @param \Symfony\Component\Form\Form $form   The Form that was submitted
-     * @param string                       $cancel The field to check for cancellation
-     * @param string                       $redirect_to
-     */
-    public static function isRequestCanceled($form, $cancel, $redirect_to)
-    {
-        if ($form->get($cancel)
-                 ->isClicked()
-        ) {
-            wp_redirect($redirect_to);
-            exit();
-        }
     }
 
     /**

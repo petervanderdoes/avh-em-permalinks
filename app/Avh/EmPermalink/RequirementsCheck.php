@@ -1,6 +1,13 @@
 <?php
 namespace Avh\EmPermalink;
 
+/**
+ * Class RequirementsCheck
+ *
+ * @package   Avh\EmPermalink
+ * @author    Peter van der Does <peter@avirtualhome.com>
+ * @copyright Copyright (c) 2015, AVH Software
+ */
 class RequirementsCheck
 {
     private $file;
@@ -24,17 +31,7 @@ class RequirementsCheck
         }
     }
 
-    public function passes()
-    {
-        $passes = $this->php_passes() && $this->wp_passes();
-        if (!$passes) {
-            add_action('admin_notices', [$this, 'deactivate']);
-        }
-
-        return $passes;
-    }
-
-    public function php_version_notice()
+    public function displayPhpVersionNotice()
     {
         echo '<div class="error">';
         echo "<p>The &#8220;" . esc_html(
@@ -43,7 +40,7 @@ class RequirementsCheck
         echo '</div>';
     }
 
-    public function wp_version_notice()
+    public function displayWordPressVersionNotice()
     {
         echo '<div class="error">';
         echo "<p>The &#8220;" . esc_html(
@@ -52,33 +49,43 @@ class RequirementsCheck
         echo '</div>';
     }
 
-    private static function __php_at_least($min_version)
+    public function passes()
+    {
+        $passes = $this->checkPhpPasses() && $this->checkWordPressPasses();
+        if (!$passes) {
+            add_action('admin_notices', [$this, 'deactivate']);
+        }
+
+        return $passes;
+    }
+
+    private static function checkPhpAtLeast($min_version)
     {
         return version_compare(phpversion(), $min_version, '>=');
     }
 
-    private static function __wp_at_least($min_version)
+    private static function checkWordPressAtLeast($min_version)
     {
         return version_compare(get_bloginfo('version'), $min_version, '>=');
     }
 
-    private function php_passes()
+    private function checkPhpPasses()
     {
-        if ($this->__php_at_least($this->php)) {
+        if ($this->checkPhpAtLeast($this->php)) {
             return true;
         } else {
-            add_action('admin_notices', [$this, 'php_version_notice']);
+            add_action('admin_notices', [$this, 'displayPhpVersionNotice']);
 
             return false;
         }
     }
 
-    private function wp_passes()
+    private function checkWordPressPasses()
     {
-        if ($this->__wp_at_least($this->wp)) {
+        if ($this->checkWordPressAtLeast($this->wp)) {
             return true;
         } else {
-            add_action('admin_notices', [$this, 'wp_version_notice']);
+            add_action('admin_notices', [$this, 'displayWordPressVersionNotice']);
 
             return false;
         }

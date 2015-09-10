@@ -46,7 +46,6 @@ interface ApplicationInterface
 
     /**
      * Resolve the given type from the container.
-     *
      * (Overriding Container::make)
      *
      * @param  string $abstract
@@ -69,7 +68,6 @@ interface ApplicationInterface
 
     /**
      * Register all of the configured providers.
-     *
      */
     public function registerConfiguredProviders();
 

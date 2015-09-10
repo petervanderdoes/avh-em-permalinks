@@ -1,5 +1,4 @@
 <?php
-
 namespace Avh\EmPermalink;
 
 use Avh\EmPermalink\Contracts\Foundation\ApplicationInterface;
@@ -12,7 +11,7 @@ use Illuminate\Filesystem\Filesystem;
 /**
  * Class Application
  *
- * @package   RpsCompetition
+ * @package   Avh\EmPermalink
  * @author    Peter van der Does <peter@avirtualhome.com>
  * @copyright Copyright (c) 2015, AVH Software
  */
@@ -87,7 +86,6 @@ class Application extends Container implements ApplicationInterface
 
     /**
      * Constructor
-     *
      */
     public function __construct()
     {
@@ -184,7 +182,6 @@ class Application extends Container implements ApplicationInterface
 
     /**
      * Resolve the given type from the container.
-     *
      * (Overriding Container::make)
      *
      * @param  string $abstract
@@ -233,7 +230,6 @@ class Application extends Container implements ApplicationInterface
 
     /**
      * Register all of the configured providers.
-     *
      */
     public function registerConfiguredProviders()
     {

@@ -13,21 +13,16 @@ class HandlePermalinks
 {
     /**
      * Rewrite tags that can be used in permalink structures.
-     *
      * These are translated into the regular expressions stored in
      * {@link WP_Rewrite::$rewritereplace} and are rewritten to the
      * query variables listed in {@link WP_Rewrite::$queryreplace}.
-     *
      * The key of the array is the actual structure tag
-     *
      * 'regex'
      * Regular expressions to be substituted into rewrite rules in place
      * of rewrite tags, see {@link WP_Rewrite::$rewritecode}.
-     *
      * 'query'
      * Query variables that rewrite tags map to, see {@link WP_Rewrite::$rewritecode}.
      * The query should NOT end with the = sign, we add this later.
-     *
      * 'replacement'
      * The replacement for the structure tag.
      *
@@ -51,7 +46,6 @@ class HandlePermalinks
 
     /**
      * Constructor.
-     *p
      */
     public function __construct()
     {
@@ -75,7 +69,6 @@ class HandlePermalinks
         if ($wp_rewrite->permalink_structure !== '') {
             switch ($post->post_type) {
                 case EM_POST_TYPE_EVENT:
-
                     $post_link = $this->filterPermalinkEvent($post_link, $post, $leavename, $sample);
                     break;
 
@@ -83,9 +76,9 @@ class HandlePermalinks
                     $post_link = $this->filterPermalinkLocation($post_link, $post, $leavename, $sample);
                     break;
             }
-
-            return $post_link;
         }
+
+        return $post_link;
     }
 
     public function filterRedirectCanonical($redirect_url, $requested_url)
@@ -126,7 +119,6 @@ class HandlePermalinks
 
     /**
      * Setup permalinks
-     *
      * Create new placeholders and add the default permalink
      */
     public function generateRewriteRules()
@@ -162,12 +154,11 @@ class HandlePermalinks
 
     /**
      * Parse the query vars.
-     *
      * Some of it has already been parsed by Event Manager, we just add our added query vars.
      *
      * @param \WP_Query $wp_query Passed by reference.
      */
-    function parseQuery($wp_query)
+    public function parseQuery($wp_query)
     {
         if (!is_admin()) {
             if (!empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring') && (empty($wp_query->query_vars['post_status']) || !in_array(
@@ -187,17 +178,17 @@ class HandlePermalinks
                 $start_day = '01';
                 $end_day = '31';
                 $is_date = false;
-                if (isset ($wp_query->query_vars['event_year'])) {
+                if (isset($wp_query->query_vars['event_year'])) {
                     $is_date = true;
                     $start_year = $wp_query->query_vars['event_year'];
                     $end_year = $start_year;
                 }
-                if (isset ($wp_query->query_vars['event_monthnum'])) {
+                if (isset($wp_query->query_vars['event_monthnum'])) {
                     $is_date = true;
                     $start_month = $wp_query->query_vars['event_monthnum'];
                     $end_month = $start_month;
                 }
-                if (isset ($wp_query->query_vars['event_day'])) {
+                if (isset($wp_query->query_vars['event_day'])) {
                     $is_date = true;
                     $start_day = $wp_query->query_vars['event_day'];
                     $end_day = $start_day;
@@ -231,7 +222,7 @@ class HandlePermalinks
                     }
                 }
 
-                if (isset ($wp_query->query_vars['event_category'])) {
+                if (isset($wp_query->query_vars['event_category'])) {
                 }
                 if (!empty($query) && is_array($query)) {
                     $wp_query->query_vars['meta_query'] = $query;
@@ -241,33 +232,7 @@ class HandlePermalinks
     }
 
     /**
-     * Get DateTime from given date.
-     *
-     * Returns false if the given date parameters are invalid.
-     *
-     * @param $year  string
-     * @param $month string
-     * @param $day   string
-     *
-     * @return bool|\DateTime
-     */
-    private function getDateTime($year, $month, $day)
-    {
-        $date = \DateTime::createFromFormat(
-            'Y/m/d H:i:s',
-            $year . '/' . $month . '/' . $day . '00:00:00'
-        );
-        $date_error = \DateTime::getLastErrors();
-        if (!empty($date_error['warning_count'])) {
-            return false;
-        }
-
-        return $date;
-    }
-
-    /**
      * Setup actions and filters.
-     *
      */
     public function setActionFilters()
     {
@@ -319,7 +284,6 @@ class HandlePermalinks
         $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
 
         if (strpos($post_link, '%event_category%') !== false) {
-
             $EM_Categories = $EM_Event->get_categories();
             if ($EM_Categories->categories) {
                 usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
@@ -375,6 +339,7 @@ class HandlePermalinks
         $EM_Location = em_get_location($post->ID, $search_by = 'post_id');
         $rewritecode_location = array_keys($this->structure_tags_locations);
         $rewritecode = $rewritecode_location;
+        $rewritereplace_location = [];
 
         if (strpos($post_link, '%location_name%') !== false) {
             if (!$leavename) {
@@ -393,5 +358,29 @@ class HandlePermalinks
         $post_link = user_trailingslashit($post_link, 'single');
 
         return $post_link;
+    }
+
+    /**
+     * Get DateTime from given date.
+     * Returns false if the given date parameters are invalid.
+     *
+     * @param $year  string
+     * @param $month string
+     * @param $day   string
+     *
+     * @return bool|\DateTime
+     */
+    private function getDateTime($year, $month, $day)
+    {
+        $date = \DateTime::createFromFormat(
+            'Y/m/d H:i:s',
+            $year . '/' . $month . '/' . $day . '00:00:00'
+        );
+        $date_error = \DateTime::getLastErrors();
+        if (!empty($date_error['warning_count'])) {
+            return false;
+        }
+
+        return $date;
     }
 }

@@ -1,4 +1,5 @@
-<?php namespace Avh\EmPermalink\Support;
+<?php
+namespace Avh\EmPermalink\Support;
 
 use Avh\EmPermalink\Contracts\Foundation\ApplicationInterface;
 use Illuminate\Filesystem\Filesystem;
@@ -6,20 +7,18 @@ use Illuminate\Filesystem\Filesystem;
 /**
  * Class ProviderRepository
  *
- * @author    Peter van der Does
+ * @package   Avh\EmPermalink\Support
+ * @author    Peter van der Does <peter@avirtualhome.com>
  * @copyright Copyright (c) 2015, AVH Software
- * @package   Avh\Support
  */
 class ProviderRepository
 {
     /**
      * The application implementation.
-     *
      */
     protected $app;
     /**
      * The filesystem instance.
-     *
      */
     protected $files;
     /**
@@ -165,12 +164,10 @@ class ProviderRepository
                 }
 
                 $manifest['when'][$provider] = $instance->when();
-            }
-
-            // If the service providers are not deferred, we will simply add it to an
-            // array of eagerly loaded providers that will get registered on every
-            // request to this application instead of "lazy" loading every time.
-            else {
+            } else {
+                // If the service providers are not deferred, we will simply add it to an
+                // array of eagerly loaded providers that will get registered on every
+                // request to this application instead of "lazy" loading every time.
                 $manifest['eager'][] = $provider;
             }
         }
