@@ -43,7 +43,9 @@ in WordPress itself.
 
 ### Events
 - '%event_year%'
-- '%event_monthnum%' 
+- '%event_monthnum%'
+- '%event_monthname_short%'
+- '%event_monthname_long%'
 - '%event_day%'
 - '%event_name%'
 - '%event_owner%'
