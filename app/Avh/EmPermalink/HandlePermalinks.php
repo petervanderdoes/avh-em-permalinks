@@ -81,6 +81,14 @@ class HandlePermalinks
         return $post_link;
     }
 
+    /**
+     * Filter the canonical redirect URL.
+     *
+     * @param string $redirect_url  The redirect URL.
+     * @param string $requested_url The requested URL.
+     *
+     * @return bool
+     */
     public function filterRedirectCanonical($redirect_url, $requested_url)
     {
         global $wp_query;

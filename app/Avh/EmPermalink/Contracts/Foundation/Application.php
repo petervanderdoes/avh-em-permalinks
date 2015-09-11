@@ -1,6 +1,11 @@
 <?php
 namespace Avh\EmPermalink\Contracts\Foundation;
 
+/**
+ * Interface ApplicationInterface
+ *
+ * @package Avh\EmPermalink\Contracts\Foundation
+ */
 interface ApplicationInterface
 {
     /**

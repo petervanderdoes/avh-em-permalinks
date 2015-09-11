@@ -15,7 +15,12 @@ class RequirementsCheck
     private $title = '';
     private $wp = '3.8';
 
-    public function __construct($args)
+    /**
+     * Constructor
+     *
+     * @param array $args
+     */
+    public function __construct($args = [])
     {
         foreach (['title', 'php', 'wp', 'file'] as $setting) {
             if (isset($args[$setting])) {
@@ -24,6 +29,9 @@ class RequirementsCheck
         }
     }
 
+    /**
+     * Deactivate the plugin.
+     */
     public function deactivate()
     {
         if (isset($this->file)) {
@@ -31,6 +39,9 @@ class RequirementsCheck
         }
     }
 
+    /**
+     * Display a notice when the PHP version is incompatible
+     */
     public function displayPhpVersionNotice()
     {
         echo '<div class="error">';
@@ -40,6 +51,9 @@ class RequirementsCheck
         echo '</div>';
     }
 
+    /**
+     * Display a notice when the WordPress version is incompatible
+     */
     public function displayWordPressVersionNotice()
     {
         echo '<div class="error">';
@@ -49,6 +63,11 @@ class RequirementsCheck
         echo '</div>';
     }
 
+    /**
+     * Check is the plugin passes the set requirements.
+     *
+     * @return bool
+     */
     public function passes()
     {
         $passes = $this->checkPhpPasses() && $this->checkWordPressPasses();
@@ -59,16 +78,24 @@ class RequirementsCheck
         return $passes;
     }
 
-    private static function checkPhpAtLeast($min_version)
+    /**
+     * Check if running PHP version is equal or later as the given version.
+     *
+     * @param string $min_version
+     *
+     * @return mixed
+     */
+    private function checkPhpAtLeast($min_version)
     {
         return version_compare(phpversion(), $min_version, '>=');
     }
 
-    private static function checkWordPressAtLeast($min_version)
-    {
-        return version_compare(get_bloginfo('version'), $min_version, '>=');
-    }
-
+    /**
+     * Check if the running PHP version passes.
+     * If it doesn't pass add action to display the PHP notice
+     *
+     * @return bool
+     */
     private function checkPhpPasses()
     {
         if ($this->checkPhpAtLeast($this->php)) {
@@ -80,6 +107,24 @@ class RequirementsCheck
         }
     }
 
+    /**
+     * Check if the running WordPress version is equal or later as the given version.
+     *
+     * @param string $min_version
+     *
+     * @return mixed
+     */
+    private function checkWordPressAtLeast($min_version)
+    {
+        return version_compare(get_bloginfo('version'), $min_version, '>=');
+    }
+
+    /**
+     * Check if the running WordPress version passes.
+     * If it doesn't pass add action to display the WordPress notice
+     *
+     * @return bool
+     */
     private function checkWordPressPasses()
     {
         if ($this->checkWordPressAtLeast($this->wp)) {
