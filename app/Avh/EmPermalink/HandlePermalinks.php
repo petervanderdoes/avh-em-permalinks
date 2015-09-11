@@ -31,6 +31,7 @@ class HandlePermalinks
     private $structure_tags_events = [
         '%event_year%'            => ['regex' => '([0-9]{4})', 'query' => 'event_year', 'replacement' => '0'],
         '%event_monthnum%'        => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum', 'replacement' => '0'],
+        '%event_monthname_long%'  => ['regex' => '([^/]+)', 'query' => 'event_monthname_long', 'replacement' => ''],
         '%event_monthname_short%' => ['regex' => '([^/]+)', 'query' => 'event_monthname_short', 'replacement' => ''],
         '%event_day%'             => ['regex' => '([0-9]{1,2})', 'query' => 'event_day', 'replacement' => '0'],
         '%event_name%'            => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_EVENT, 'replacement' => ''],
@@ -203,6 +204,12 @@ class HandlePermalinks
                     $start_month = $tmp_date->format('m');
                     $end_month = $start_month;
                 }
+                if (isset($wp_query->query_vars['event_monthname_long'])) {
+                    $is_date = true;
+                    $tmp_date = \DateTime::createFromFormat('F', $wp_query->query_vars['event_monthname_long']);
+                    $start_month = $tmp_date->format('m');
+                    $end_month = $start_month;
+                }
                 if (isset($wp_query->query_vars['event_day'])) {
                     $is_date = true;
                     $start_day = $wp_query->query_vars['event_day'];
@@ -297,6 +304,7 @@ class HandlePermalinks
         $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
         $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
         $this->structure_tags_events['%event_monthname_short%']['replacement'] = strtolower($event_start_date->format('M'));
+        $this->structure_tags_events['%event_monthname_long%']['replacement'] = strtolower($event_start_date->format('F'));
         $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
 
         if (strpos($post_link, '%event_category%') !== false) {
