@@ -236,7 +236,7 @@ class Application extends Container implements ApplicationInterface
     public function registerConfiguredProviders()
     {
         $upload_dir_info = wp_upload_dir();
-        $manifestPath_directory = $upload_dir_info['basedir'] . '/avh-em-permalinks/framework';
+        $manifestPath_directory = $upload_dir_info['basedir'] . '/avh-em-permalinks/services';
         CommonHelper::createDirectory($manifestPath_directory);
         $manifestPath = $manifestPath_directory . '/services.json';
 
