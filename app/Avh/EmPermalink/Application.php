@@ -96,7 +96,8 @@ class Application extends Container implements ApplicationInterface
 
         $this->config['app.providers'] = [];
         $this->registerCoreContainerAliases();
-        $this->registerConfiguredProviders();
+        // We're not using service providers at the moment so skip this part.
+        // $this->registerConfiguredProviders();
     }
 
     /**
