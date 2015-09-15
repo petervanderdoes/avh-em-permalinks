@@ -13,7 +13,7 @@ WP_VERSION=${5-master}
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=/tmp/wordpress/
-NAME=$(basename $(pwd))
+NAME=$(pwd)
 
 set -ex
 
