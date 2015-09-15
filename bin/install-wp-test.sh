@@ -74,9 +74,10 @@ install_db() {
 }
 
 remove_echo() {
+	cd $WP_TESTS_DIR
 	# Comment out the echo as this interferes with Sessions.
-    sed $ioption '62 s/^/\/\/ /' tests/phpunit/includes/bootstrap.php
-    sed $ioption '34 s/^/\/\/ /' tests/phpunit/includes/install.php
+    sed $ioption '62 s/^/\/\/ /' includes/bootstrap.php
+    sed $ioption '34 s/^/\/\/ /' includes/install.php
 
 }
 install_wp
