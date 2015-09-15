@@ -90,5 +90,5 @@ install_plugin() {
 install_wp
 install_test_suite
 install_db
-install_db
+install_plugin
 remove_echo
