@@ -80,7 +80,15 @@ remove_echo() {
     sed $ioption '34 s/^/\/\/ /' includes/install.php
 
 }
+
+install_plugin() {
+	local $NAME
+	NAME=$(basename $(pwd))
+	mv $NAME /tmp/wordpress/src/wp-content/plugins/avh-em-permalinks
+}
+
 install_wp
 install_test_suite
+install_db
 install_db
 remove_echo

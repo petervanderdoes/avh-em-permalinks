@@ -5,10 +5,10 @@ if ( !$_tests_dir ) $_tests_dir = '/tmp/wordpress-tests-lib';
 
 require_once $_tests_dir . '/includes/functions.php';
 
-function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../avh-em-permalinks.php';
-}
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
+// Activates this plugin in WordPress so it can be tested.
+$GLOBALS['wp_tests_options'] = array(
+    'active_plugins' => array('avh-em-permalinks/avh-em-permalinks.php'),
+);
 
 require $_tests_dir . '/includes/bootstrap.php';
 
