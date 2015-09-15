@@ -83,7 +83,9 @@ remove_echo() {
 }
 
 install_plugin() {
-	mv $NAME /tmp/wordpress/wp-content/plugins/avh-em-permalinks
+	wget -nv -O /tmp/events-manager.zip https://downloads.wordpress.org/plugin/events-manager.5.6.zip
+	unzip /tmp/events-manager.zip -d ${WP_CORE_DIR}wp-content/plugins
+	mv $NAME ${WP_CORE_DIR}wp-content/plugins/avh-em-permalinks
 }
 
 install_wp
