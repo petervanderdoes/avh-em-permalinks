@@ -117,6 +117,9 @@ class Plugin
      */
     public function registerPostTypes()
     {
+        $event_recurring_post_type = [];
+        $location_post_type = [];
+
         // We assume the admin url is absolute with at least one querystring
         define('EM_ADMIN_URL', admin_url() . 'edit.php?post_type=' . EM_POST_TYPE_EVENT);
         if (get_option('dbem_tags_enabled', true)) {
