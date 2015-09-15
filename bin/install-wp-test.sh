@@ -83,7 +83,7 @@ remove_echo() {
 }
 
 install_plugin() {
-	mv $NAME /tmp/wordpress/src/wp-content/plugins/avh-em-permalinks
+	mv $NAME /tmp/wordpress/wp-content/plugins/avh-em-permalinks
 }
 
 install_wp
