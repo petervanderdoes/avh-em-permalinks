@@ -11,17 +11,3 @@ $GLOBALS['wp_tests_options'] = array(
 );
 
 require $_tests_dir . '/includes/bootstrap.php';
-
-class avh_em_permalinks_TestCase extends WP_UnitTestCase {
-	function plugin() {
-		return avh_em_permalinks_Plugin::get_instance();
-	}
-
-	function set_post( $key, $value ) {
-		$_POST[$key] = $_REQUEST[$key] = addslashes( $value );
-	}
-
-	function unset_post( $key ) {
-		unset( $_POST[$key], $_REQUEST[$key] );
-	}
-}

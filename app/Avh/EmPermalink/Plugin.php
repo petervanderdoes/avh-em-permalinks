@@ -13,6 +13,7 @@ use Illuminate\Config\Repository;
  */
 class Plugin
 {
+    private $app;
     /** @var Repository $settings */
     private $settings;
 
@@ -55,9 +56,10 @@ class Plugin
         if (is_admin()) {
             add_action('activate_' . $this->settings->get('plugin_basename'), [$this, 'pluginActivation']);
             add_action('deactivate_' . $this->settings->get('plugin_basename'), [$this, 'pluginDeactivation']);
-        } else {
-            //new FrontEnd($this->app);
         }
+        //else {
+        //new FrontEnd($this->app);
+        //}
     }
 
     /**

@@ -45,9 +45,9 @@ class RequirementsCheck
     public function displayPhpVersionNotice()
     {
         echo '<div class="error">';
-        echo "<p>The &#8220;" . esc_html(
+        echo '<p>The &#8220;' . esc_html(
                 $this->title
-            ) . "&#8221; plugin cannot run on PHP versions older than " . $this->php . '. Please contact your host and ask them to upgrade.</p>';
+            ) . '&#8221; plugin cannot run on PHP versions older than ' . $this->php . '. Please contact your host and ask them to upgrade.</p>';
         echo '</div>';
     }
 
@@ -57,9 +57,9 @@ class RequirementsCheck
     public function displayWordPressVersionNotice()
     {
         echo '<div class="error">';
-        echo "<p>The &#8220;" . esc_html(
+        echo '<p>The &#8220;' . esc_html(
                 $this->title
-            ) . "&#8221; plugin cannot run on WordPress versions older than " . $this->wp . '. Please update WordPress.</p>';
+            ) . '&#8221; plugin cannot run on WordPress versions older than ' . $this->wp . '. Please update WordPress.</p>';
         echo '</div>';
     }
 

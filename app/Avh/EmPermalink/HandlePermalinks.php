@@ -62,7 +62,7 @@ class HandlePermalinks
      * @param bool     $leavename Whether to keep the post name.
      * @param bool     $sample    Is it a sample permalink.
      *
-     * @return mixed|string|void
+     * @return string
      */
     public function filterPermalink($post_link, $post, $leavename = false, $sample = false)
     {
@@ -89,7 +89,7 @@ class HandlePermalinks
      * @param string $redirect_url  The redirect URL.
      * @param string $requested_url The requested URL.
      *
-     * @return bool
+     * @return bool|string
      */
     public function filterRedirectCanonical($redirect_url, $requested_url)
     {
@@ -292,7 +292,7 @@ class HandlePermalinks
      * @param bool     $leavename Whether to keep the post name.
      * @param bool     $sample    Is it a sample permalink.
      *
-     * @return mixed|string|void
+     * @return string
      */
     private function filterPermalinkEvent($post_link, $post, $leavename, $sample)
     {
@@ -356,7 +356,7 @@ class HandlePermalinks
      * @param bool     $leavename Whether to keep the post name.
      * @param bool     $sample    Is it a sample permalink.
      *
-     * @return mixed|string|void
+     * @return string
      */
     private function filterPermalinkLocation($post_link, $post, $leavename, $sample)
     {

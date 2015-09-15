@@ -11,6 +11,7 @@ use Illuminate\Filesystem\Filesystem;
 /**
  * Class Application
  *
+ * @property Repository config
  * @package   Avh\EmPermalink
  * @author    Peter van der Does <peter@avirtualhome.com>
  * @copyright Copyright (c) 2015, AVH Software
@@ -93,8 +94,7 @@ class Application extends Container implements ApplicationInterface
         $items = [];
         $this->instance('config', $config = new Repository($items));
 
-        $this->config['app.providers'] = [
-        ];
+        $this->config['app.providers'] = [];
         $this->registerCoreContainerAliases();
         $this->registerConfiguredProviders();
     }
@@ -230,6 +230,8 @@ class Application extends Container implements ApplicationInterface
 
     /**
      * Register all of the configured providers.
+     *
+     * @return void
      */
     public function registerConfiguredProviders()
     {
