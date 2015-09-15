@@ -56,3 +56,6 @@ checks:
 
 tools:
     external_code_coverage: false
+
+coding_style:
+    php: {  }
