@@ -13,6 +13,7 @@ WP_VERSION=${5-master}
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=/tmp/wordpress/
+NAME=$(basename $(pwd))
 
 set -ex
 
@@ -82,8 +83,6 @@ remove_echo() {
 }
 
 install_plugin() {
-	local $NAME
-	NAME=$(basename $(pwd))
 	mv $NAME /tmp/wordpress/src/wp-content/plugins/avh-em-permalinks
 }
 
