@@ -74,7 +74,7 @@ interface ApplicationInterface
     /**
      * Register all of the configured providers.
      *
-     * @return void;
+     * @return void
      */
     public function registerConfiguredProviders();
 
