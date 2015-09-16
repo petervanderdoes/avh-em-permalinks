@@ -199,16 +199,26 @@ class HandlePermalinks
                     $end_month = $start_month;
                 }
                 if (isset($wp_query->query_vars['event_monthname_short'])) {
-                    $is_date = true;
                     $tmp_date = \DateTime::createFromFormat('M', $wp_query->query_vars['event_monthname_short']);
-                    $start_month = $tmp_date->format('m');
-                    $end_month = $start_month;
+                    if ($tmp_date !== false) {
+                        $is_date = true;
+                        $start_month = $tmp_date->format('m');
+                        $end_month = $start_month;
+                    } else {
+                        $wp_query->set_404();
+                        $is_date = false;
+                    }
                 }
                 if (isset($wp_query->query_vars['event_monthname_long'])) {
-                    $is_date = true;
                     $tmp_date = \DateTime::createFromFormat('F', $wp_query->query_vars['event_monthname_long']);
-                    $start_month = $tmp_date->format('m');
-                    $end_month = $start_month;
+                    if ($tmp_date !== false) {
+                        $is_date = true;
+                        $start_month = $tmp_date->format('m');
+                        $end_month = $start_month;
+                    } else {
+                        $wp_query->set_404();
+                        $is_date = false;
+                    }
                 }
                 if (isset($wp_query->query_vars['event_day'])) {
                     $is_date = true;
@@ -219,7 +229,7 @@ class HandlePermalinks
                 if ($is_date) {
                     $start_date = $this->getDateTime($start_year, $start_month, $start_day);
                     if ($start_date === false) {
-                        $wp_query->is_404 = true;
+                        $wp_query->set_404();
                     }
 
                     if ($start_day !== $end_day) {
@@ -228,7 +238,7 @@ class HandlePermalinks
                     } else {
                         $end_date = $this->getDateTime($end_year, $end_month, $end_day);
                         if ($end_date === false) {
-                            $wp_query->is_404 = true;
+                            $wp_query->set_404();
                         }
                     }
 
@@ -303,8 +313,12 @@ class HandlePermalinks
         $event_start_date = new \DateTime($EM_Event->event_start_date);
         $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
         $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
-        $this->structure_tags_events['%event_monthname_short%']['replacement'] = strtolower($event_start_date->format('M'));
-        $this->structure_tags_events['%event_monthname_long%']['replacement'] = strtolower($event_start_date->format('F'));
+        $this->structure_tags_events['%event_monthname_short%']['replacement'] = strtolower(
+            $event_start_date->format('M')
+        );
+        $this->structure_tags_events['%event_monthname_long%']['replacement'] = strtolower(
+            $event_start_date->format('F')
+        );
         $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
 
         if (strpos($post_link, '%event_category%') !== false) {
