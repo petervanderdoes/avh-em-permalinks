@@ -95,7 +95,7 @@ class HandlePermalinks
     {
         global $wp_query;
         $em_post_type = [EM_POST_TYPE_EVENT => true, EM_POST_TYPE_LOCATION => true];
-        $post_type = $wp_query->post_type;
+        $post_type = $wp_query->query['post_type'];
         if (array_key_exists($post_type, $em_post_type)) {
             return false;
         }
