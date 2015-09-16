@@ -238,7 +238,7 @@ class HandlePermalinks
                         $check_date_end = $end_date->format('U');
                         $query[] = [
                             'key'     => '_start_ts',
-                            'value'   => array($check_date_start, $check_date_end),
+                            'value'   => [$check_date_start, $check_date_end],
                             'compare' => 'BETWEEN'
                         ];
                     }
