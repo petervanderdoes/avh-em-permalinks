@@ -171,11 +171,7 @@ class HandlePermalinks
     public function parseQuery($wp_query)
     {
         if (!is_admin()) {
-            if (!empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring') && (empty($wp_query->query_vars['post_status']) || !in_array(
-                        $wp_query->query_vars['post_status'],
-                        ['trash', 'pending', 'draft']
-                    ))
-            ) {
+            if ($this->validatePostType($wp_query) && $this->validatePostStatus($wp_query)) {
                 if (isset($wp_query->query_vars['meta_query'])) {
                     $query = $wp_query->query_vars['meta_query'];
                 } else {
@@ -420,5 +416,35 @@ class HandlePermalinks
         }
 
         return $date;
+    }
+
+    /**
+     * Validate the post status
+     *
+     * @param $wp_query
+     *
+     * @return bool
+     */
+    private function validatePostStatus($wp_query)
+    {
+        $invalid_post_status = ['trash' => true, 'pending' => true, 'draft' => true];
+        $is_invalid_post_status = array_key_exists($wp_query->query_vars['post_status'], $invalid_post_status);
+
+        return (empty($wp_query->query_vars['post_status']) || !$is_invalid_post_status);
+    }
+
+    /**
+     * Validate Post Type
+     * Following custom posts are allowed:
+     * - EM_POST_TYPE_EVENT
+     * - event-recurring
+     *
+     * @param $wp_query
+     *
+     * @return bool
+     */
+    private function validatePostType($wp_query)
+    {
+        return !empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring');
     }
 }
