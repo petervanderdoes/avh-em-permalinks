@@ -71,6 +71,7 @@ class HandlePermalinks
         if ($wp_rewrite->permalink_structure !== '') {
             switch ($post->post_type) {
                 case EM_POST_TYPE_EVENT:
+                    'event-recurring';
                     $post_link = $this->filterPermalinkEvent($post_link, $post, $leavename, $sample);
                     break;
 
@@ -94,7 +95,7 @@ class HandlePermalinks
     public function filterRedirectCanonical($redirect_url, $requested_url)
     {
         global $wp_query;
-        $em_post_type = [EM_POST_TYPE_EVENT => true, EM_POST_TYPE_LOCATION => true];
+        $em_post_type = [EM_POST_TYPE_EVENT => true, 'event-recurring' => true, EM_POST_TYPE_LOCATION => true];
         $post_type = $wp_query->query['post_type'];
         if (array_key_exists($post_type, $em_post_type)) {
             return false;
