@@ -172,87 +172,89 @@ class HandlePermalinks
     public function parseQuery($wp_query)
     {
         if (!is_admin()) {
-            if ($this->validatePostType(
-                    $wp_query,
-                    [EM_POST_TYPE_EVENT, 'event-recurring']
-                ) && $this->validatePostStatus($wp_query)
-            ) {
-                $query = avh_array_get($wp_query->query_vars, 'meta_query', []);
-                $start_year = '1970';
-                $end_year = '2038';
-                $start_month = '01';
-                $end_month = '12';
-                $start_day = '01';
-                $end_day = '31';
-                $is_date = false;
-                $correct_month_name = true;
+            if ($this->validatePostType($wp_query, [EM_POST_TYPE_EVENT, 'event-recurring'])) {
+                if (empty($wp_query->query_vars['post_status']) || (!$this->validatePostStatus(
+                        $wp_query,
+                        ['trash', 'pending', 'draft']
+                    ))
+                ) {
+                    $query = avh_array_get($wp_query->query_vars, 'meta_query', []);
+                    $start_year = '1970';
+                    $end_year = '2038';
+                    $start_month = '01';
+                    $end_month = '12';
+                    $start_day = '01';
+                    $end_day = '31';
+                    $is_date = false;
+                    $correct_month_name = true;
 
-                if (isset($wp_query->query_vars['event_year'])) {
-                    $is_date = true;
-                    $start_year = $wp_query->query_vars['event_year'];
-                    $end_year = $start_year;
-                }
-
-                if (isset($wp_query->query_vars['event_monthnum'])) {
-                    $is_date = true;
-                    $start_month = $wp_query->query_vars['event_monthnum'];
-                    $end_month = $start_month;
-                }
-
-                if (isset($wp_query->query_vars['event_monthname_short'])) {
-                    $is_date = true;
-                    $tmp_date = \DateTime::createFromFormat('M', $wp_query->query_vars['event_monthname_short']);
-                    if ($tmp_date !== false) {
-                        $start_month = $tmp_date->format('m');
-                        $end_month = $start_month;
-                    } else {
-                        $correct_month_name = false;
+                    if (isset($wp_query->query_vars['event_year'])) {
+                        $is_date = true;
+                        $start_year = $wp_query->query_vars['event_year'];
+                        $end_year = $start_year;
                     }
-                }
 
-                if (isset($wp_query->query_vars['event_monthname_long'])) {
-                    $is_date = true;
-                    $tmp_date = \DateTime::createFromFormat('F', $wp_query->query_vars['event_monthname_long']);
-                    if ($tmp_date !== false) {
-                        $start_month = $tmp_date->format('m');
+                    if (isset($wp_query->query_vars['event_monthnum'])) {
+                        $is_date = true;
+                        $start_month = $wp_query->query_vars['event_monthnum'];
                         $end_month = $start_month;
-                    } else {
-                        $correct_month_name = false;
                     }
-                }
 
-                if (isset($wp_query->query_vars['event_day'])) {
-                    $is_date = true;
-                    $start_day = $wp_query->query_vars['event_day'];
-                    $end_day = $start_day;
-                }
-
-                if ($is_date && $correct_month_name) {
-                    $start_date = $this->getDateTime($start_year, $start_month, $start_day);
-                    if ($start_date !== false) {
-                        if ($start_day !== $end_day) {
-                            $end_date = $this->getDateTime($end_year, $end_month, $start_day);
-                            $end_date->modify('last day of this month');
+                    if (isset($wp_query->query_vars['event_monthname_short'])) {
+                        $is_date = true;
+                        $tmp_date = \DateTime::createFromFormat('M', $wp_query->query_vars['event_monthname_short']);
+                        if ($tmp_date !== false) {
+                            $start_month = $tmp_date->format('m');
+                            $end_month = $start_month;
                         } else {
-                            $end_date = $this->getDateTime($end_year, $end_month, $end_day);
-                        }
-                        if ($end_date !== false) {
-                            $check_date_start = $start_date->format('U');
-                            $end_date->add(new \DateInterval('PT23H59M59S'));
-                            $check_date_end = $end_date->format('U');
-                            $query[] = [
-                                'key'     => '_start_ts',
-                                'value'   => [$check_date_start, $check_date_end],
-                                'compare' => 'BETWEEN'
-                            ];
+                            $correct_month_name = false;
                         }
                     }
-                }
 
-                if (isset($wp_query->query_vars['event_category'])) {
-                }
-                if (!empty($query) && is_array($query)) {
-                    $wp_query->query_vars['meta_query'] = $query;
+                    if (isset($wp_query->query_vars['event_monthname_long'])) {
+                        $is_date = true;
+                        $tmp_date = \DateTime::createFromFormat('F', $wp_query->query_vars['event_monthname_long']);
+                        if ($tmp_date !== false) {
+                            $start_month = $tmp_date->format('m');
+                            $end_month = $start_month;
+                        } else {
+                            $correct_month_name = false;
+                        }
+                    }
+
+                    if (isset($wp_query->query_vars['event_day'])) {
+                        $is_date = true;
+                        $start_day = $wp_query->query_vars['event_day'];
+                        $end_day = $start_day;
+                    }
+
+                    if ($is_date && $correct_month_name) {
+                        $start_date = $this->getDateTime($start_year, $start_month, $start_day);
+                        if ($start_date !== false) {
+                            if ($start_day !== $end_day) {
+                                $end_date = $this->getDateTime($end_year, $end_month, $start_day);
+                                $end_date->modify('last day of this month');
+                            } else {
+                                $end_date = $this->getDateTime($end_year, $end_month, $end_day);
+                            }
+                            if ($end_date !== false) {
+                                $check_date_start = $start_date->format('U');
+                                $end_date->add(new \DateInterval('PT23H59M59S'));
+                                $check_date_end = $end_date->format('U');
+                                $query[] = [
+                                    'key'     => '_start_ts',
+                                    'value'   => [$check_date_start, $check_date_end],
+                                    'compare' => 'BETWEEN'
+                                ];
+                            }
+                        }
+                    }
+
+                    if (isset($wp_query->query_vars['event_category'])) {
+                    }
+                    if (!empty($query) && is_array($query)) {
+                        $wp_query->query_vars['meta_query'] = $query;
+                    }
                 }
             }
         }
@@ -282,7 +284,7 @@ class HandlePermalinks
     public function setupQueryVars($vars)
     {
         $structure_tags = $this->structure_tags_events + $this->structure_tags_locations + $this->structure_tags_terms;
-        foreach ($structure_tags as $placeholder => $information) {
+        foreach ($structure_tags as $information) {
             $vars[] = $information['query'];
         }
 
@@ -301,9 +303,9 @@ class HandlePermalinks
      */
     private function filterPermalinkEvent($post_link, $post, $leavename, $sample)
     {
-        $rewritereplace_event = [];
-        $EM_Event = em_get_event($post->ID, $search_by = 'post_id');
-        $rewritecode = array_keys($this->structure_tags_events);
+        $EM_Event = em_get_event($post->ID, 'post_id');
+        $replace_tags = array_keys($this->structure_tags_events);
+        $replace_information = [];
 
         $event_start_date = new \DateTime($EM_Event->event_start_date);
         $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
@@ -344,12 +346,11 @@ class HandlePermalinks
             }
         }
 
-        foreach ($this->structure_tags_events as $structured_tag => $information) {
-            $rewritereplace_event[] = $information['replacement'];
+        foreach ($this->structure_tags_events as $information) {
+            $replace_information[] = $information['replacement'];
         }
 
-        $rewritereplace = $rewritereplace_event;
-        $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
+        $post_link = str_replace($replace_tags, $replace_information, $post_link);
         if ('draft' != $post->post_status) {
             $post_link = user_trailingslashit($post_link, 'single');
         }
@@ -369,10 +370,9 @@ class HandlePermalinks
      */
     private function filterPermalinkLocation($post_link, $post, $leavename, $sample)
     {
-        $EM_Location = em_get_location($post->ID, $search_by = 'post_id');
-        $rewritecode_location = array_keys($this->structure_tags_locations);
-        $rewritecode = $rewritecode_location;
-        $rewritereplace_location = [];
+        $EM_Location = em_get_location($post->ID, 'post_id');
+        $replace_tags = array_keys($this->structure_tags_locations);
+        $replace_information = [];
 
         if (strpos($post_link, '%location_name%') !== false) {
             if (!$leavename) {
@@ -382,12 +382,11 @@ class HandlePermalinks
             }
         }
 
-        foreach ($this->structure_tags_locations as $structured_tag => $information) {
-            $rewritereplace_location[] = $information['replacement'];
+        foreach ($this->structure_tags_locations as $information) {
+            $replace_information[] = $information['replacement'];
         }
 
-        $rewritereplace = $rewritereplace_location;
-        $post_link = str_replace($rewritecode, $rewritereplace, $post_link);
+        $post_link = str_replace($replace_tags, $replace_information, $post_link);
         $post_link = user_trailingslashit($post_link, 'single');
 
         return $post_link;
@@ -421,15 +420,13 @@ class HandlePermalinks
      * Validate the post status
      *
      * @param \WP_Query $wp_query
+     * @param array     $post_status
      *
      * @return bool
      */
-    private function validatePostStatus($wp_query)
+    private function validatePostStatus($wp_query, $post_status)
     {
-        $invalid_post_status = ['trash' => true, 'pending' => true, 'draft' => true];
-        $is_invalid_post_status = array_key_exists($wp_query->query_vars['post_status'], $invalid_post_status);
-
-        return (empty($wp_query->query_vars['post_status']) || !$is_invalid_post_status);
+        return (isset($post_status[$wp_query->query_vars['post_status']]));
     }
 
     /**
@@ -442,13 +439,6 @@ class HandlePermalinks
      */
     private function validatePostType($wp_query, $post_type)
     {
-        $return = false;
-        if (!empty($wp_query->query_vars['post_type'])) {
-            if (isset($post_type[$wp_query->query_vars['post_type']])) {
-                $return = true;
-            }
-        }
-
-        return $return;
+        return (isset($post_type[$wp_query->query_vars['post_type']]));
     }
 }
