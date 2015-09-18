@@ -92,7 +92,7 @@ class Application extends Container implements ApplicationInterface
     {
         $this->registerBaseBindings();
         $items = [];
-        $this->instance('config', $config = new Repository($items));
+        $this->instance('config', new Repository($items));
 
         $this->config['app.providers'] = [];
         $this->registerCoreContainerAliases();
