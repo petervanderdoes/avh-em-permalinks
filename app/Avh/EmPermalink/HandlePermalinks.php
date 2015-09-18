@@ -172,7 +172,11 @@ class HandlePermalinks
     public function parseQuery($wp_query)
     {
         if (!is_admin()) {
-            if ($this->validatePostType($wp_query) && $this->validatePostStatus($wp_query)) {
+            if ($this->validatePostType(
+                    $wp_query,
+                    [EM_POST_TYPE_EVENT, 'event-recurring']
+                ) && $this->validatePostStatus($wp_query)
+            ) {
                 $query = avh_array_get($wp_query->query_vars, 'meta_query', []);
                 $start_year = '1970';
                 $end_year = '2038';
@@ -430,16 +434,21 @@ class HandlePermalinks
 
     /**
      * Validate Post Type
-     * Following custom posts are allowed:
-     * - EM_POST_TYPE_EVENT
-     * - event-recurring
      *
-     * @param $wp_query
+     * @param \WP_Query $wp_query
+     * @param array     $post_type
      *
      * @return bool
      */
-    private function validatePostType($wp_query)
+    private function validatePostType($wp_query, $post_type)
     {
-        return !empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring');
+        $return = false;
+        if (!empty($wp_query->query_vars['post_type'])) {
+            if (in_array($post_type, $wp_query->query_vars['post_type'])) {
+                $return = true;
+            }
+        }
+
+        return $return;
     }
 }
