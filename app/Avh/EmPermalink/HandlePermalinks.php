@@ -420,7 +420,7 @@ class HandlePermalinks
     /**
      * Validate the post status
      *
-     * @param $wp_query
+     * @param \WP_Query $wp_query
      *
      * @return bool
      */
@@ -444,7 +444,7 @@ class HandlePermalinks
     {
         $return = false;
         if (!empty($wp_query->query_vars['post_type'])) {
-            if (in_array($post_type, $wp_query->query_vars['post_type'])) {
+            if (isset($post_type[$wp_query->query_vars['post_type']])) {
                 $return = true;
             }
         }
