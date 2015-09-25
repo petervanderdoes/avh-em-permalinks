@@ -13,5 +13,5 @@ return array(
     'Illuminate\\Contracts\\' => array($vendorDir . '/illuminate/contracts'),
     'Illuminate\\Container\\' => array($vendorDir . '/illuminate/container'),
     'Illuminate\\Config\\' => array($vendorDir . '/illuminate/config'),
-    'Avh\\' => array($baseDir . '/app/Avh'),
+    'Avh\\EmPermalink\\' => array($baseDir . '/app/Avh/EmPermalink'),
 );

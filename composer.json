@@ -16,13 +16,13 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"Avh\\": "app/Avh"
+			"Avh\\EmPermalink\\": "app/Avh/EmPermalink"
 		}
 	},
 	"require": {
 		"php": ">=5.4",
-		"illuminate/container": "~5.0",
-		"illuminate/config": "~5.0",
-		"illuminate/filesystem": "~5.0"
+		"illuminate/container": "5.0.*",
+		"illuminate/config": "5.0.*",
+		"illuminate/filesystem": "5.0.*"
 	}
 }
