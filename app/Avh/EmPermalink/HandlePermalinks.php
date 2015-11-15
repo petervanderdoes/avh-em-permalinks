@@ -96,11 +96,13 @@ class HandlePermalinks
     {
         global $wp_query;
         $em_post_type = [EM_POST_TYPE_EVENT => true, 'event-recurring' => true, EM_POST_TYPE_LOCATION => true];
-        $post_type = $wp_query->query['post_type'];
-        if (array_key_exists($post_type, $em_post_type)) {
-            return false;
-        }
+        if (isset($wp_query->query['post_type'])) {
+            $post_type = $wp_query->query['post_type'];
 
+            if (array_key_exists($post_type, $em_post_type)) {
+                return false;
+            }
+        }
         return $redirect_url;
     }
 
@@ -426,7 +428,12 @@ class HandlePermalinks
      */
     private function validatePostStatus($wp_query, $post_status)
     {
-        return (isset($post_status[$wp_query->query_vars['post_status']]));
+        $valid = false;
+        if (isset($wp_query->query_vars['post_status'])) {
+            $valid = isset($post_status[$wp_query->query_vars['post_status']]);
+        }
+
+        return $valid;
     }
 
     /**
@@ -439,6 +446,11 @@ class HandlePermalinks
      */
     private function validatePostType($wp_query, $post_type)
     {
-        return (isset($post_type[$wp_query->query_vars['post_type']]));
+        $valid = false;
+        if (isset($wp_query->query_vars['post_type'])) {
+            $valid = isset($post_type[$wp_query->query_vars['post_type']]);
+        }
+
+        return $valid;
     }
 }
