@@ -43,7 +43,7 @@ require __DIR__ . '/vendor/autoload.php';
 $avh_em_permalinks_requirements_check = new RequirementsCheck(
     [
         'title' => 'AVH Event Manager Permalinks',
-        'php'   => '5.4',
+        'php'   => '5.5',
         'wp'    => '4.1',
         'file'  => __FILE__,
     ]
