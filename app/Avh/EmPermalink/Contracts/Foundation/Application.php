@@ -58,7 +58,7 @@ interface ApplicationInterface
      *
      * @return mixed
      */
-    public function make($abstract, $parameters = []);
+    public function make($abstract, array $parameters = []);
 
     /**
      * Register a service provider with the application.
