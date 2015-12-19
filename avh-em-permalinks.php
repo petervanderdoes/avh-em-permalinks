@@ -3,7 +3,7 @@
  * Plugin Name: AVH Event Manager Permalinks
  * Plugin URI:
  * Description: Create better permalink for Event Manager
- * Version: 0.1.3-dev.6
+ * Version: 0.1.3-dev.45
  * Author:      Peter van der Does
  * Author URI:
  * License:     GPLv2+
