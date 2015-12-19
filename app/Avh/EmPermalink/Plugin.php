@@ -14,16 +14,21 @@ use Illuminate\Config\Repository;
 class Plugin
 {
     private $app;
+    /**
+     * @var \Avh\EmPermalink\RequirementsCheck
+     */
+    private $requirement_check;
     /** @var Repository $settings */
     private $settings;
 
     /**
      * Constructor.
      *
-     * @param string $dir
-     * @param string $basename
+     * @param string            $dir
+     * @param string            $basename
+     * @param RequirementsCheck $requirement_check
      */
-    public function __construct($dir, $basename)
+    public function __construct($dir, $basename, $requirement_check)
     {
         $this->app = new Application();
 
@@ -32,10 +37,20 @@ class Plugin
         $this->settings = $this->app->make('Settings');
         $this->settings->set('plugin_dir', $dir);
         $this->settings->set('plugin_file', $basename);
-
+        $this->requirement_check = $requirement_check;
         if (!defined('WP_INSTALLING') || WP_INSTALLING === false) {
+            add_action('plugins_loaded', [$this, 'checkDependency']);
             add_action('plugins_loaded', [$this, 'load']);
         }
+
+    }
+
+    /**
+     * Check for dependencies.
+     *
+     */
+    public function checkDependency() {
+        $this->requirement_check->checkDependencyDefined('EM_VERSION', 'Events Manager');
     }
 
     public function actionInit()
@@ -48,18 +63,20 @@ class Plugin
      */
     public function load()
     {
-        add_action('init', [$this, 'registerCustomPosts'], 11);
-        add_action('init', [$this, 'actionInit'], 10);
-        $this->setSettings();
-        $this->removeEventManagerActionFilter();
-        new HandlePermalinks();
-        if (is_admin()) {
-            add_action('activate_' . $this->settings->get('plugin_basename'), [$this, 'pluginActivation']);
-            add_action('deactivate_' . $this->settings->get('plugin_basename'), [$this, 'pluginDeactivation']);
+        if ($this->requirement_check->hasDependencies()) {
+            add_action('init', [$this, 'actionInit'], 10);
+            add_action('init', [$this, 'registerCustomPosts'], 11);
+            $this->setSettings();
+            $this->removeEventManagerActionFilter();
+            new HandlePermalinks();
+            if (is_admin()) {
+                add_action('activate_' . $this->settings->get('plugin_basename'), [$this, 'pluginActivation']);
+                add_action('deactivate_' . $this->settings->get('plugin_basename'), [$this, 'pluginDeactivation']);
+            }
+            //else {
+            //new FrontEnd($this->app);
+            //}
         }
-        //else {
-        //new FrontEnd($this->app);
-        //}
     }
 
     /**
