@@ -58,95 +58,6 @@
         ]
     },
     {
-        "name": "illuminate/contracts",
-        "version": "v5.1.22",
-        "version_normalized": "5.1.22.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/illuminate/contracts.git",
-            "reference": "e2b71fdbeeb3438748dca5f497e205888788a883"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/contracts/zipball/e2b71fdbeeb3438748dca5f497e205888788a883",
-            "reference": "e2b71fdbeeb3438748dca5f497e205888788a883",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.5.9"
-        },
-        "time": "2015-09-24 11:16:48",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "5.1-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Illuminate\\Contracts\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Taylor Otwell",
-                "email": "taylorotwell@gmail.com"
-            }
-        ],
-        "description": "The Illuminate Contracts package.",
-        "homepage": "http://laravel.com"
-    },
-    {
-        "name": "illuminate/container",
-        "version": "v5.1.22",
-        "version_normalized": "5.1.22.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/illuminate/container.git",
-            "reference": "bb2cd1d9c6cb7c4ce80b8d89f899e086f5a4f65b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/container/zipball/bb2cd1d9c6cb7c4ce80b8d89f899e086f5a4f65b",
-            "reference": "bb2cd1d9c6cb7c4ce80b8d89f899e086f5a4f65b",
-            "shasum": ""
-        },
-        "require": {
-            "illuminate/contracts": "5.1.*",
-            "php": ">=5.5.9"
-        },
-        "time": "2015-10-19 06:01:02",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "5.1-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Illuminate\\Container\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Taylor Otwell",
-                "email": "taylorotwell@gmail.com"
-            }
-        ],
-        "description": "The Illuminate Container package.",
-        "homepage": "http://laravel.com"
-    },
-    {
         "name": "doctrine/inflector",
         "version": "v1.1.0",
         "version_normalized": "1.1.0.0",
@@ -216,18 +127,107 @@
         ]
     },
     {
-        "name": "illuminate/support",
-        "version": "v5.1.22",
-        "version_normalized": "5.1.22.0",
+        "name": "illuminate/contracts",
+        "version": "v5.1.31",
+        "version_normalized": "5.1.31.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/illuminate/support.git",
-            "reference": "d52a832d3f4b025b82f954cbdef8ee24f6a77e77"
+            "url": "https://github.com/illuminate/contracts.git",
+            "reference": "e2b71fdbeeb3438748dca5f497e205888788a883"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/support/zipball/d52a832d3f4b025b82f954cbdef8ee24f6a77e77",
-            "reference": "d52a832d3f4b025b82f954cbdef8ee24f6a77e77",
+            "url": "https://api.github.com/repos/illuminate/contracts/zipball/e2b71fdbeeb3438748dca5f497e205888788a883",
+            "reference": "e2b71fdbeeb3438748dca5f497e205888788a883",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "time": "2015-09-24 11:16:48",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Illuminate\\Contracts\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Otwell",
+                "email": "taylorotwell@gmail.com"
+            }
+        ],
+        "description": "The Illuminate Contracts package.",
+        "homepage": "http://laravel.com"
+    },
+    {
+        "name": "illuminate/container",
+        "version": "v5.1.31",
+        "version_normalized": "5.1.31.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/illuminate/container.git",
+            "reference": "91e10d009af0afd95d729bdec7acf9958ae95277"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/illuminate/container/zipball/91e10d009af0afd95d729bdec7acf9958ae95277",
+            "reference": "91e10d009af0afd95d729bdec7acf9958ae95277",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/contracts": "5.1.*",
+            "php": ">=5.5.9"
+        },
+        "time": "2015-12-07 20:20:37",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Illuminate\\Container\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Otwell",
+                "email": "taylorotwell@gmail.com"
+            }
+        ],
+        "description": "The Illuminate Container package.",
+        "homepage": "http://laravel.com"
+    },
+    {
+        "name": "illuminate/support",
+        "version": "v5.1.31",
+        "version_normalized": "5.1.31.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/illuminate/support.git",
+            "reference": "96e4fa331ed8bad83314a6bdb26a998970a0d8c2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/illuminate/support/zipball/96e4fa331ed8bad83314a6bdb26a998970a0d8c2",
+            "reference": "96e4fa331ed8bad83314a6bdb26a998970a0d8c2",
             "shasum": ""
         },
         "require": {
@@ -239,10 +239,10 @@
         },
         "suggest": {
             "jeremeamia/superclosure": "Required to be able to serialize closures (~2.0).",
-            "paragonie/random_compat": "Provides a compatible interface like PHP7's random_bytes() in PHP 5 projects (^1.0.6).",
-            "symfony/var-dumper": "Required to use the dd function (2.7.*)."
+            "paragonie/random_compat": "Provides a compatible interface like PHP7's random_bytes() in PHP 5 projects (~1.1).",
+            "symfony/var-dumper": "Improves the dd function (2.7.*)."
         },
-        "time": "2015-10-19 06:01:02",
+        "time": "2016-02-15 19:41:59",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -273,23 +273,23 @@
     },
     {
         "name": "symfony/finder",
-        "version": "v2.7.6",
-        "version_normalized": "2.7.6.0",
+        "version": "v2.7.10",
+        "version_normalized": "2.7.10.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/finder.git",
-            "reference": "2ffb4e9598db3c48eb6d0ae73b04bbf09280c59d"
+            "reference": "addcb70b33affbca4f3979b0d000259b63dd6711"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/finder/zipball/2ffb4e9598db3c48eb6d0ae73b04bbf09280c59d",
-            "reference": "2ffb4e9598db3c48eb6d0ae73b04bbf09280c59d",
+            "url": "https://api.github.com/repos/symfony/finder/zipball/addcb70b33affbca4f3979b0d000259b63dd6711",
+            "reference": "addcb70b33affbca4f3979b0d000259b63dd6711",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.9"
         },
-        "time": "2015-10-11 09:39:48",
+        "time": "2016-02-22 16:12:29",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -300,7 +300,10 @@
         "autoload": {
             "psr-4": {
                 "Symfony\\Component\\Finder\\": ""
-            }
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -321,17 +324,17 @@
     },
     {
         "name": "illuminate/filesystem",
-        "version": "v5.1.22",
-        "version_normalized": "5.1.22.0",
+        "version": "v5.1.31",
+        "version_normalized": "5.1.31.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/filesystem.git",
-            "reference": "d2df6ede91e6af495674f2def38170330319819f"
+            "reference": "9371a2893ef759b585f27d7c3bf8e2b54268ec46"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/filesystem/zipball/d2df6ede91e6af495674f2def38170330319819f",
-            "reference": "d2df6ede91e6af495674f2def38170330319819f",
+            "url": "https://api.github.com/repos/illuminate/filesystem/zipball/9371a2893ef759b585f27d7c3bf8e2b54268ec46",
+            "reference": "9371a2893ef759b585f27d7c3bf8e2b54268ec46",
             "shasum": ""
         },
         "require": {
@@ -345,7 +348,7 @@
             "league/flysystem-aws-s3-v3": "Required to use the Flysystem S3 driver (~1.0).",
             "league/flysystem-rackspace": "Required to use the Flysystem Rackspace driver (~1.0)."
         },
-        "time": "2015-10-19 06:01:02",
+        "time": "2016-02-16 14:02:58",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -373,8 +376,8 @@
     },
     {
         "name": "illuminate/config",
-        "version": "v5.1.22",
-        "version_normalized": "5.1.22.0",
+        "version": "v5.1.31",
+        "version_normalized": "5.1.31.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/config.git",
