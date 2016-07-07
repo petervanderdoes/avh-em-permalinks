@@ -20,7 +20,7 @@ class CommonHelper
      */
     public static function arrayMsort($array, $cols)
     {
-        $row_is_object = false;
+        $row_is_object     = false;
         $sort_column_array = [];
 
         // Create multiple arrays using the array $cols.
@@ -29,7 +29,7 @@ class CommonHelper
             $sort_column_array[$col] = [];
             foreach ($array as $key => $row) {
                 if (is_object($row)) {
-                    $row = (array) $row;
+                    $row           = (array) $row;
                     $row_is_object = true;
                 }
                 $sort_column_array[$col][$key] = strtolower($row[$col]);

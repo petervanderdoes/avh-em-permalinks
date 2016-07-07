@@ -121,12 +121,10 @@ class Application extends Container implements ApplicationInterface
     {
         $name = is_string($provider) ? $provider : get_class($provider);
 
-        return array_first(
-            $this->serviceProviders,
-            function ($key, $value) use ($name) {
+        return array_first($this->serviceProviders,
+            function($key, $value) use ($name) {
                 return $value instanceof $name;
-            }
-        );
+            });
     }
 
     /**
@@ -236,7 +234,7 @@ class Application extends Container implements ApplicationInterface
      */
     public function registerConfiguredProviders()
     {
-        $upload_dir_info = wp_upload_dir();
+        $upload_dir_info        = wp_upload_dir();
         $manifestPath_directory = $upload_dir_info['basedir'] . '/avh-em-permalinks/services';
         CommonHelper::createDirectory($manifestPath_directory);
         $manifestPath = $manifestPath_directory . '/services.json';

@@ -28,7 +28,7 @@ class HandlePermalinks
      *
      * @var array
      */
-    private $structure_tags_events = [
+    private $structure_tags_events    = [
         '%event_year%'            => ['regex' => '([0-9]{4})', 'query' => 'event_year', 'replacement' => '0'],
         '%event_monthnum%'        => ['regex' => '([0-9]{1,2})', 'query' => 'event_monthnum', 'replacement' => '0'],
         '%event_monthname_long%'  => ['regex' => '([^/]+)', 'query' => 'event_monthname_long', 'replacement' => ''],
@@ -42,7 +42,7 @@ class HandlePermalinks
     private $structure_tags_locations = [
         '%location_name%' => ['regex' => '([^/]+)', 'query' => EM_POST_TYPE_LOCATION, 'replacement' => '']
     ];
-    private $structure_tags_terms = [
+    private $structure_tags_terms     = [
         '%category_name%' => ['regex' => '([^/]+)', 'query' => EM_TAXONOMY_CATEGORY, 'replacement' => '']
     ];
 
@@ -103,6 +103,7 @@ class HandlePermalinks
                 return false;
             }
         }
+
         return $redirect_url;
     }
 
@@ -120,10 +121,10 @@ class HandlePermalinks
         switch ($taxonomy) {
             case EM_TAXONOMY_CATEGORY:
                 if (strpos($termlink, '%category_name%') !== false) {
-                    $rewritecode = ['%category_name%'];
+                    $rewritecode    = ['%category_name%'];
                     $rewritereplace = [$term->slug];
-                    $termlink = str_replace($rewritecode, $rewritereplace, $termlink);
-                    $termlink = user_trailingslashit($termlink, 'single');
+                    $termlink       = str_replace($rewritecode, $rewritereplace, $termlink);
+                    $termlink       = user_trailingslashit($termlink, 'single');
                 }
         }
 
@@ -141,26 +142,20 @@ class HandlePermalinks
          */
         $structure_tags = $this->structure_tags_events + $this->structure_tags_locations + $this->structure_tags_terms;
         foreach ($structure_tags as $placeholder => $information) {
-            $regex = $information['regex'];
+            $regex     = $information['regex'];
             $query_var = $information['query'] . '=';
             add_rewrite_tag($placeholder, $regex, $query_var);
         }
 
-        add_permastruct(
-            EM_POST_TYPE_EVENT,
-            get_option('dbem_cp_events_slug', EM_POST_TYPE_EVENT_SLUG),
-            ['with_front' => false]
-        );
-        add_permastruct(
-            EM_POST_TYPE_LOCATION,
-            get_option('dbem_cp_locations_slug', EM_POST_TYPE_LOCATION_SLUG),
-            ['with_front' => false]
-        );
-        add_permastruct(
-            EM_TAXONOMY_CATEGORY,
-            get_option('dbem_taxonomy_category_slug', EM_TAXONOMY_CATEGORY_SLUG) . '/%category_name%',
-            ['hierarchical' => true, 'with_front' => false]
-        );
+        add_permastruct(EM_POST_TYPE_EVENT,
+                        get_option('dbem_cp_events_slug', EM_POST_TYPE_EVENT_SLUG),
+                        ['with_front' => false]);
+        add_permastruct(EM_POST_TYPE_LOCATION,
+                        get_option('dbem_cp_locations_slug', EM_POST_TYPE_LOCATION_SLUG),
+                        ['with_front' => false]);
+        add_permastruct(EM_TAXONOMY_CATEGORY,
+                        get_option('dbem_taxonomy_category_slug', EM_TAXONOMY_CATEGORY_SLUG) . '/%category_name%',
+                        ['hierarchical' => true, 'with_front' => false]);
 
         flush_rewrite_rules();
     }
@@ -175,59 +170,61 @@ class HandlePermalinks
     {
         if (!is_admin()) {
             if ($this->validatePostType($wp_query, [EM_POST_TYPE_EVENT, 'event-recurring'])) {
-                if (empty($wp_query->query_vars['post_status']) || (!$this->validatePostStatus(
-                        $wp_query,
-                        ['trash', 'pending', 'draft']
-                    ))
+                if (empty($wp_query->query_vars['post_status']) || (!$this->validatePostStatus($wp_query,
+                                                                                               [
+                                                                                                   'trash',
+                                                                                                   'pending',
+                                                                                                   'draft'
+                                                                                               ]))
                 ) {
-                    $query = avh_array_get($wp_query->query_vars, 'meta_query', []);
-                    $start_year = '1970';
-                    $end_year = '2038';
-                    $start_month = '01';
-                    $end_month = '12';
-                    $start_day = '01';
-                    $end_day = '31';
-                    $is_date = false;
+                    $query              = avh_array_get($wp_query->query_vars, 'meta_query', []);
+                    $start_year         = '1970';
+                    $end_year           = '2038';
+                    $start_month        = '01';
+                    $end_month          = '12';
+                    $start_day          = '01';
+                    $end_day            = '31';
+                    $is_date            = false;
                     $correct_month_name = true;
 
                     if (isset($wp_query->query_vars['event_year'])) {
-                        $is_date = true;
+                        $is_date    = true;
                         $start_year = $wp_query->query_vars['event_year'];
-                        $end_year = $start_year;
+                        $end_year   = $start_year;
                     }
 
                     if (isset($wp_query->query_vars['event_monthnum'])) {
-                        $is_date = true;
+                        $is_date     = true;
                         $start_month = $wp_query->query_vars['event_monthnum'];
-                        $end_month = $start_month;
+                        $end_month   = $start_month;
                     }
 
                     if (isset($wp_query->query_vars['event_monthname_short'])) {
-                        $is_date = true;
+                        $is_date  = true;
                         $tmp_date = \DateTime::createFromFormat('M', $wp_query->query_vars['event_monthname_short']);
                         if ($tmp_date !== false) {
                             $start_month = $tmp_date->format('m');
-                            $end_month = $start_month;
+                            $end_month   = $start_month;
                         } else {
                             $correct_month_name = false;
                         }
                     }
 
                     if (isset($wp_query->query_vars['event_monthname_long'])) {
-                        $is_date = true;
+                        $is_date  = true;
                         $tmp_date = \DateTime::createFromFormat('F', $wp_query->query_vars['event_monthname_long']);
                         if ($tmp_date !== false) {
                             $start_month = $tmp_date->format('m');
-                            $end_month = $start_month;
+                            $end_month   = $start_month;
                         } else {
                             $correct_month_name = false;
                         }
                     }
 
                     if (isset($wp_query->query_vars['event_day'])) {
-                        $is_date = true;
+                        $is_date   = true;
                         $start_day = $wp_query->query_vars['event_day'];
-                        $end_day = $start_day;
+                        $end_day   = $start_day;
                     }
 
                     if ($is_date && $correct_month_name) {
@@ -243,7 +240,7 @@ class HandlePermalinks
                                 $check_date_start = $start_date->format('U');
                                 $end_date->add(new \DateInterval('PT23H59M59S'));
                                 $check_date_end = $end_date->format('U');
-                                $query[] = [
+                                $query[]        = [
                                     'key'     => '_start_ts',
                                     'value'   => [$check_date_start, $check_date_end],
                                     'compare' => 'BETWEEN'
@@ -305,38 +302,35 @@ class HandlePermalinks
      */
     private function filterPermalinkEvent($post_link, $post, $leavename, $sample)
     {
-        $EM_Event = em_get_event($post->ID, 'post_id');
-        $replace_tags = array_keys($this->structure_tags_events);
+        $EM_Event            = em_get_event($post->ID, 'post_id');
+        $replace_tags        = array_keys($this->structure_tags_events);
         $replace_information = [];
 
-        $event_start_date = new \DateTime($EM_Event->event_start_date);
-        $this->structure_tags_events['%event_year%']['replacement'] = $event_start_date->format('Y');
-        $this->structure_tags_events['%event_monthnum%']['replacement'] = $event_start_date->format('m');
-        $this->structure_tags_events['%event_monthname_short%']['replacement'] = strtolower(
-            $event_start_date->format('M')
-        );
-        $this->structure_tags_events['%event_monthname_long%']['replacement'] = strtolower(
-            $event_start_date->format('F')
-        );
-        $this->structure_tags_events['%event_day%']['replacement'] = $event_start_date->format('d');
+        $event_start_date                                                      = new \DateTime($EM_Event->event_start_date);
+        $this->structure_tags_events['%event_year%']['replacement']            = $event_start_date->format('Y');
+        $this->structure_tags_events['%event_monthnum%']['replacement']        = $event_start_date->format('m');
+        $this->structure_tags_events['%event_monthname_short%']['replacement'] = strtolower($event_start_date->format('M'));
+        $this->structure_tags_events['%event_monthname_long%']['replacement']  = strtolower($event_start_date->format('F'));
+        $this->structure_tags_events['%event_day%']['replacement']             = $event_start_date->format('d');
 
         if (strpos($post_link, '%event_category%') !== false) {
             $EM_Categories = $EM_Event->get_categories();
             if ($EM_Categories->categories) {
                 usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
-                $category_object = $EM_Categories->categories[0];
-                $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
+                $category_object                                                = $EM_Categories->categories[0];
+                $category_object                                                = get_term($category_object,
+                                                                                           EM_TAXONOMY_CATEGORY);
                 $this->structure_tags_events['%event_category%']['replacement'] = $category_object->slug;
             }
         }
 
         if (strpos($post_link, '%event_location%') !== false) {
-            $EM_Location = em_get_location($EM_Event->location_id);
+            $EM_Location                                                    = em_get_location($EM_Event->location_id);
             $this->structure_tags_events['%event_location%']['replacement'] = $EM_Location->location_slug;
         }
 
         if (strpos($post_link, '%event_owner%') !== false) {
-            $authordata = get_userdata($EM_Event->event_owner);
+            $authordata                                                  = get_userdata($EM_Event->event_owner);
             $this->structure_tags_events['%event_owner%']['replacement'] = $authordata->user_nicename;
         }
 
@@ -372,8 +366,8 @@ class HandlePermalinks
      */
     private function filterPermalinkLocation($post_link, $post, $leavename, $sample)
     {
-        $EM_Location = em_get_location($post->ID, 'post_id');
-        $replace_tags = array_keys($this->structure_tags_locations);
+        $EM_Location         = em_get_location($post->ID, 'post_id');
+        $replace_tags        = array_keys($this->structure_tags_locations);
         $replace_information = [];
 
         if (strpos($post_link, '%location_name%') !== false) {
@@ -406,10 +400,8 @@ class HandlePermalinks
      */
     private function getDateTime($year, $month, $day)
     {
-        $date = \DateTime::createFromFormat(
-            'Y/m/d H:i:s',
-            $year . '/' . $month . '/' . $day . '00:00:00'
-        );
+        $date       = \DateTime::createFromFormat('Y/m/d H:i:s',
+                                                  $year . '/' . $month . '/' . $day . '00:00:00');
         $date_error = \DateTime::getLastErrors();
         if (!empty($date_error['warning_count'])) {
             return false;
