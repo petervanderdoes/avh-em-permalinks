@@ -314,32 +314,19 @@ class HandlePermalinks
         $this->structure_tags_events['%event_day%']['replacement']             = $event_start_date->format('d');
 
         if (strpos($post_link, '%event_category%') !== false) {
-            $EM_Categories = $EM_Event->get_categories();
-            if ($EM_Categories->categories) {
-                usort($EM_Categories->categories, '_usort_terms_by_ID'); // order by ID
-                $category_object                                                = $EM_Categories->categories[0];
-                $category_object                                                = get_term($category_object,
-                                                                                           EM_TAXONOMY_CATEGORY);
-                $this->structure_tags_events['%event_category%']['replacement'] = $category_object->slug;
-            }
+            $this->handleEventCategory($EM_Event);
         }
 
         if (strpos($post_link, '%event_location%') !== false) {
-            $EM_Location                                                    = em_get_location($EM_Event->location_id);
-            $this->structure_tags_events['%event_location%']['replacement'] = $EM_Location->location_slug;
+            $this->handleEventLocation($EM_Event);
         }
 
         if (strpos($post_link, '%event_owner%') !== false) {
-            $authordata                                                  = get_userdata($EM_Event->event_owner);
-            $this->structure_tags_events['%event_owner%']['replacement'] = $authordata->user_nicename;
+            $this->handleEventOwner($EM_Event);
         }
 
         if (strpos($post_link, '%event_name%') !== false) {
-            if (!$leavename) {
-                $this->structure_tags_events['%event_name%']['replacement'] = $EM_Event->event_slug;
-            } else {
-                $this->structure_tags_events['%event_name%']['replacement'] = '%postname%';
-            }
+            $this->handleEventName($leavename, $EM_Event);
         }
 
         foreach ($this->structure_tags_events as $information) {
@@ -411,6 +398,62 @@ class HandlePermalinks
     }
 
     /**
+     * Handle the %event_category% substitution
+     *
+     * @param \EM_Event $EM_Event
+     */
+    private function handleEventCategory($EM_Event)
+    {
+        $EM_Categories = $EM_Event->get_categories();
+        if ($EM_Categories->categories) {
+            usort($EM_Categories->categories, '_usort_terms_by_ID');
+            $category_object = $EM_Categories->categories[0];
+            $category_object = get_term($category_object, EM_TAXONOMY_CATEGORY);
+
+            $this->structure_tags_events['%event_category%']['replacement'] = $category_object->slug;
+        }
+    }
+
+    /**
+     * Handle the %event_location% substitution
+     *
+     * @param \EM_Event $EM_Event
+     */
+    private function handleEventLocation($EM_Event)
+    {
+        $EM_Location = em_get_location($EM_Event->location_id);
+
+        $this->structure_tags_events['%event_location%']['replacement'] = $EM_Location->location_slug;
+    }
+
+    /**
+     * Handle the %event_name% substitution
+     *
+     * @param bool      $leavename
+     * @param \EM_Event $EM_Event
+     */
+    private function handleEventName($leavename, $EM_Event)
+    {
+        if (!$leavename) {
+            $this->structure_tags_events['%event_name%']['replacement'] = $EM_Event->event_slug;
+        } else {
+            $this->structure_tags_events['%event_name%']['replacement'] = '%postname%';
+        }
+    }
+
+    /**
+     * Handle the %event_owner% substitution
+     *
+     * @param \EM_Event $EM_Event
+     */
+    private function handleEventOwner($EM_Event)
+    {
+        $authordata = get_userdata($EM_Event->event_owner);
+
+        $this->structure_tags_events['%event_owner%']['replacement'] = $authordata->user_nicename;
+    }
+
+    /**
      * Validate the post status
      *
      * @param \WP_Query $wp_query
@@ -422,7 +465,7 @@ class HandlePermalinks
     {
         $valid = false;
         if (isset($wp_query->query_vars['post_status'])) {
-            $valid = isset($post_status[$wp_query->query_vars['post_status']]);
+            $valid = isset($post_status[ $wp_query->query_vars['post_status'] ]);
         }
 
         return $valid;
@@ -440,7 +483,7 @@ class HandlePermalinks
     {
         $valid = false;
         if (isset($wp_query->query_vars['post_type'])) {
-            $valid = isset($post_type[$wp_query->query_vars['post_type']]);
+            $valid = isset($post_type[ $wp_query->query_vars['post_type'] ]);
         }
 
         return $valid;
